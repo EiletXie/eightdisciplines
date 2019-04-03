@@ -1,0 +1,12 @@
+server:
+  port: 8002
+  servlet:
+    context-path: /EightDisciplines
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@192.168.0.217:1521:orcl
+    driver: oracle.jdbc.driver.OracleDriver
+    username: spfs
+    password: password
+

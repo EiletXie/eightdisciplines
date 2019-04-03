@@ -1,0 +1,40 @@
+server:
+  port: 8002
+  servlet:
+    context-path: /EightDisciplines
+
+# 排除数据源配置
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@192.168.0.217:1521:orcl
+    driver: oracle.jdbc.driver.OracleDriver
+    username: spfs
+    password: password
+
+  thymeleaf:
+    #<!-- 关闭thymeleaf缓存 开发时使用 否则没有实时画面-->
+    cache: false
+    ## 检查模板是否存在，然后再呈现
+    check-template-location: true
+    servlet:
+      content-type: text/html
+    #启用MVC Thymeleaf视图分辨率
+    enabled: true
+    #模板编码
+    mode: LEGACYHTML5
+    prefix: classpath:/templates/
+    suffix: .html
+
+limit:
+  minMoney: 20
+  maxMoney: 2000
+  description: 最小${limit.minMoney},最大${limit.maxMoney}
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    call-setters-on-nulls: true
+
+
+
+
