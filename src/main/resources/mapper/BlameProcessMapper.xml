@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suntak.eightdisciplines.dao.BlameProcessDao">
+
+    <select id="getBlamesByBaseUid" resultType="com.suntak.eightdisciplines.entity.BlameProcess">
+        SELECT t.base_uid,t.standard_operation_code,t.operation_description,t.blame_content,t.blame_type
+        FROM spfs30_8d_sell_blame_opers t
+        WHERE t.base_uid = #{base_uid}
+    </select>
+
+    <insert id="addBlameProcess" useGeneratedKeys="true"  keyProperty="base_uid">
+          INSERT INTO spfs30_8d_sell_blame_opers (base_uid,standard_operation_code,operation_description,blame_content,blame_type)
+          VALUES (SEQ_MODIFY_COMPLAINT_HISTORY.NEXTVAL,#{standard_operation_code},#{operation_description},#{blame_content},#{blame_type})
+	</insert>
+
+
+    <delete id="deleteBlamesByBaseUid" >
+        DELETE FROM spfs30_8d_sell_blame_opers WHERE base_uid = #{base_uid}
+    </delete>
+
+</mapper>

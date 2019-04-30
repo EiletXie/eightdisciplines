@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suntak.eightdisciplines.dao.CustomerComplaintDao">
+    <resultMap id="CustomerComplaint" type="com.suntak.eightdisciplines.entity.CustomerComplaint">
+        <id property="base_uid" column="base_uid"/>
+        <result property="customcode" column="customcode"/>
+        <result property="model" column="model"/>
+        <result property="defedtdesc" column="defedtdesc"/>
+        <result property="claimtypes" column="claimtypes"/>
+        <result property="leasts" column="leasts"/>
+
+        <result property="revokeresult" column="revokeresult"/>
+        <result property="customprocess" column="customprocess"/>
+
+
+        <collection property="blameProcesses" ofType="com.suntak.eightdisciplines.entity.BlameProcess"
+                    select="selectBlamesForComplaint" column="base_uid"/>
+        <collection property="outBlameProcesses" ofType="com.suntak.eightdisciplines.entity.BlameProcess"
+                    select="selectOutBlamesForComplaint" column="base_uid"/>
+    </resultMap>
+
+    <resultMap id="BlameProcess" type="com.suntak.eightdisciplines.entity.BlameProcess">
+        <id property="base_uid" column="base_uid"/>
+        <result property="standard_operation_code" column="standard_operation_code"/>
+        <result property="operation_description" column="operation_description"/>
+        <result property="blame_content" column="blame_content"/>
+        <result property="blame_type" column="blame_type"/>
+    </resultMap>
+
+    <select id="getComplaintsByCar" resultType="com.suntak.eightdisciplines.entity.CustomerComplaint">
+        SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,s.status
+		FROM spfs30_8d_sell t
+		LEFT JOIN base_form s
+		ON t.base_uid = s.base_uid
+		WHERE t.leasts = #{leasts}
+	</select>
+
+    <select id="getComplaintByBaseUid" resultMap="CustomerComplaint">
+		SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,t.model,s.status
+		FROM spfs30_8d_sell t
+		LEFT JOIN base_form s
+		ON t.base_uid = s.base_uid
+		WHERE t.base_uid = #{base_uid}
+	</select>
+
+    <select id="selectBlamesForComplaint" resultMap="BlameProcess">
+        SELECT t.base_uid,t.standard_operation_code,t.operation_description,t.blame_content,t.blame_type
+        FROM spfs30_8d_sell_blame_opers t
+        WHERE t.base_uid = #{base_uid} AND t.blame_type = '产生工序'
+    </select>
+
+    <select id="selectOutBlamesForComplaint" resultMap="BlameProcess">
+        SELECT t.base_uid,t.standard_operation_code,t.operation_description,t.blame_content,t.blame_type
+        FROM spfs30_8d_sell_blame_opers t
+        WHERE t.base_uid = #{base_uid} AND t.blame_type = '流出工序'
+    </select>
+
+    <select id="getMeaningByCode" resultType="String">
+		SELECT t.code_desc FROM sc.codes t
+		WHERE t.code = #{code,jdbcType=VARCHAR} AND t.code_type = #{code_type}  AND ROWNUM = 1
+	</select>
+
+    <update id="updateComplaint">
+        UPDATE spfs30_8d_sell
+        SET
+        <if test="defedtdesc != null">defedtdesc=#{defedtdesc},</if>
+        <if test="claimtypes != null">claimtypes=#{claimtypes},</if>
+        <if test="customprocess != null">customprocess=#{customprocess},</if>
+        <if test="revokeresult != null">revokeresult=#{revokeresult},</if>
+        <if test="model != null">model=#{model}</if>
+        WHERE base_uid = #{base_uid}
+    </update>
+
+    <update id="deleteComplaint">
+        UPDATE base_form
+          SET  status= 'T'
+        WHERE  base_uid = #{base_uid}
+    </update>
+
+
+</mapper>

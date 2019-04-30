@@ -10,350 +10,261 @@ import java.util.List;
  */
 @EntityScan
 public class CustomerComplaint {
-    private String BASE_UID;
-    private String WD_UID;
-    private String WD_NO;
-    private String CUSTOMCODE;
-    private String CUSTOMER_ID;
-    private String DELIVERY;
-    private String CUSTOMNUMBER;
-    private String CUSTOMDATE;
-    private String MODEL; //生产型号
-    private String ORDERHEAD;
-    private String ORDERLINE;
-    private String NEW_COMPANY_ID;
-    private String OWN_DEPATMENT;
-    private String DEFEDTDESC; // 缺陷描述
-    private String BADDESC;
-    private String RESPON;
-    private String SALESPRICE;
-    private String CURRENCY; // 币别
-    private String BADCATEGORY; // 客户品名
-    private String CLAIMTYPES; // 投诉类别
-    private String LEASTS; // CAR号
-    private String CATEGORY;
-    private String NUMBERSET;
-    private String CUSTOMER_NUMBER;
-    private String NUMBERPCS;
-    private String SHIPSET; //
-    private String SHIPPCS; // 出货数量
-    private String LAYERS; // 层数
-    private String PRODUCTTYPE;
-    private String SALESAREA; //销售区域
-    private String CUSTOMPROCESS; //处理类别
-    private String CUSTOMLEVEL; // 客诉等级
-    private String REVOKERESULT; // 不计入理由
-    private String BLAME_OPER; // 责任工序
+    private String base_uid;
+    private String customcode;
+    private String customer_id;
+    private String customnumber;
+    private String model; //生产型号
+    private String orderhead;
+    private String orderline;
+    private String new_company_id;
+    private String defedtdesc; // 缺陷描述
+    private String salesprice;
+    private String currency; // 币别
+    private String badcategory; // 客户品名
+    private String claimtypes; // 投诉类别
+    private String leasts; // CAR号
+    private String category;
+    private String shippcs; // 出货数量
+    private String layers; // 层数
+    private String producttype;
+    private String salesarea; //销售区域
+    private String customprocess; //处理类别
+    private String customlevel; // 客诉等级
+    private String revokeresult; // 不计入理由
 
-    public String getBASE_UID() {
-        return BASE_UID;
-    }
-
-    public void setBASE_UID(String BASE_UID) {
-        this.BASE_UID = BASE_UID;
-    }
-
-    public String getWD_UID() {
-        return WD_UID;
-    }
-
-    public void setWD_UID(String WD_UID) {
-        this.WD_UID = WD_UID;
-    }
-
-    public String getWD_NO() {
-        return WD_NO;
-    }
-
-    public void setWD_NO(String WD_NO) {
-        this.WD_NO = WD_NO;
-    }
-
-    public String getCUSTOMCODE() {
-        return CUSTOMCODE;
-    }
-
-    public void setCUSTOMCODE(String CUSTOMCODE) {
-        this.CUSTOMCODE = CUSTOMCODE;
-    }
-
-    public String getCUSTOMER_ID() {
-        return CUSTOMER_ID;
-    }
-
-    public void setCUSTOMER_ID(String CUSTOMER_ID) {
-        this.CUSTOMER_ID = CUSTOMER_ID;
-    }
-
-    public String getDELIVERY() {
-        return DELIVERY;
-    }
-
-    public void setDELIVERY(String DELIVERY) {
-        this.DELIVERY = DELIVERY;
-    }
-
-    public String getCUSTOMNUMBER() {
-        return CUSTOMNUMBER;
-    }
-
-    public void setCUSTOMNUMBER(String CUSTOMNUMBER) {
-        this.CUSTOMNUMBER = CUSTOMNUMBER;
-    }
-
-    public String getCUSTOMDATE() {
-        return CUSTOMDATE;
-    }
-
-    public void setCUSTOMDATE(String CUSTOMDATE) {
-        this.CUSTOMDATE = CUSTOMDATE;
-    }
-
-    public String getMODEL() {
-        return MODEL;
-    }
-
-    public void setMODEL(String MODEL) {
-        this.MODEL = MODEL;
-    }
+    private String status; // 表单状态
+    private List<BlameProcess> blameProcesses; // 责任产生工序
+    private List<BlameProcess> outBlameProcesses; // 责任流出工序
 
-    public String getORDERHEAD() {
-        return ORDERHEAD;
+    public String getStatus() {
+        return status;
     }
 
-    public void setORDERHEAD(String ORDERHEAD) {
-        this.ORDERHEAD = ORDERHEAD;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getORDERLINE() {
-        return ORDERLINE;
+    public String getBase_uid() {
+        return base_uid;
     }
 
-    public void setORDERLINE(String ORDERLINE) {
-        this.ORDERLINE = ORDERLINE;
+    public void setBase_uid(String base_uid) {
+        this.base_uid = base_uid;
     }
 
-    public String getNEW_COMPANY_ID() {
-        return NEW_COMPANY_ID;
+    public String getCustomcode() {
+        return customcode;
     }
 
-    public void setNEW_COMPANY_ID(String NEW_COMPANY_ID) {
-        this.NEW_COMPANY_ID = NEW_COMPANY_ID;
+    public void setCustomcode(String customcode) {
+        this.customcode = customcode;
     }
 
-    public String getOWN_DEPATMENT() {
-        return OWN_DEPATMENT;
+    public String getCustomer_id() {
+        return customer_id;
     }
 
-    public void setOWN_DEPATMENT(String OWN_DEPATMENT) {
-        this.OWN_DEPATMENT = OWN_DEPATMENT;
+    public void setCustomer_id(String customer_id) {
+        this.customer_id = customer_id;
     }
 
-    public String getDEFEDTDESC() {
-        return DEFEDTDESC;
+    public String getCustomnumber() {
+        return customnumber;
     }
 
-    public void setDEFEDTDESC(String DEFEDTDESC) {
-        this.DEFEDTDESC = DEFEDTDESC;
+    public void setCustomnumber(String customnumber) {
+        this.customnumber = customnumber;
     }
 
-    public String getBADDESC() {
-        return BADDESC;
+    public String getModel() {
+        return model;
     }
 
-    public void setBADDESC(String BADDESC) {
-        this.BADDESC = BADDESC;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public String getRESPON() {
-        return RESPON;
+    public String getOrderhead() {
+        return orderhead;
     }
 
-    public void setRESPON(String RESPON) {
-        this.RESPON = RESPON;
+    public void setOrderhead(String orderhead) {
+        this.orderhead = orderhead;
     }
 
-    public String getSALESPRICE() {
-        return SALESPRICE;
+    public String getOrderline() {
+        return orderline;
     }
 
-    public void setSALESPRICE(String SALESPRICE) {
-        this.SALESPRICE = SALESPRICE;
+    public void setOrderline(String orderline) {
+        this.orderline = orderline;
     }
 
-    public String getCURRENCY() {
-        return CURRENCY;
+    public String getNew_company_id() {
+        return new_company_id;
     }
 
-    public void setCURRENCY(String CURRENCY) {
-        this.CURRENCY = CURRENCY;
+    public void setNew_company_id(String new_company_id) {
+        this.new_company_id = new_company_id;
     }
 
-    public String getBADCATEGORY() {
-        return BADCATEGORY;
+    public String getDefedtdesc() {
+        return defedtdesc;
     }
 
-    public void setBADCATEGORY(String BADCATEGORY) {
-        this.BADCATEGORY = BADCATEGORY;
+    public void setDefedtdesc(String defedtdesc) {
+        this.defedtdesc = defedtdesc;
     }
 
-    public String getCLAIMTYPES() {
-        return CLAIMTYPES;
+    public String getSalesprice() {
+        return salesprice;
     }
 
-    public void setCLAIMTYPES(String CLAIMTYPES) {
-        this.CLAIMTYPES = CLAIMTYPES;
+    public void setSalesprice(String salesprice) {
+        this.salesprice = salesprice;
     }
 
-    public String getLEASTS() {
-        return LEASTS;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setLEASTS(String LEASTS) {
-        this.LEASTS = LEASTS;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
-    public String getCATEGORY() {
-        return CATEGORY;
+    public String getBadcategory() {
+        return badcategory;
     }
 
-    public void setCATEGORY(String CATEGORY) {
-        this.CATEGORY = CATEGORY;
+    public void setBadcategory(String badcategory) {
+        this.badcategory = badcategory;
     }
 
-    public String getNUMBERSET() {
-        return NUMBERSET;
+    public String getClaimtypes() {
+        return claimtypes;
     }
 
-    public void setNUMBERSET(String NUMBERSET) {
-        this.NUMBERSET = NUMBERSET;
+    public void setClaimtypes(String claimtypes) {
+        this.claimtypes = claimtypes;
     }
 
-    public String getCUSTOMER_NUMBER() {
-        return CUSTOMER_NUMBER;
+    public String getLeasts() {
+        return leasts;
     }
 
-    public void setCUSTOMER_NUMBER(String CUSTOMER_NUMBER) {
-        this.CUSTOMER_NUMBER = CUSTOMER_NUMBER;
+    public void setLeasts(String leasts) {
+        this.leasts = leasts;
     }
 
-    public String getNUMBERPCS() {
-        return NUMBERPCS;
+    public String getCategory() {
+        return category;
     }
 
-    public void setNUMBERPCS(String NUMBERPCS) {
-        this.NUMBERPCS = NUMBERPCS;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getSHIPSET() {
-        return SHIPSET;
+    public String getShippcs() {
+        return shippcs;
     }
 
-    public void setSHIPSET(String SHIPSET) {
-        this.SHIPSET = SHIPSET;
+    public void setShippcs(String shippcs) {
+        this.shippcs = shippcs;
     }
 
-    public String getSHIPPCS() {
-        return SHIPPCS;
+    public String getLayers() {
+        return layers;
     }
 
-    public void setSHIPPCS(String SHIPPCS) {
-        this.SHIPPCS = SHIPPCS;
+    public void setLayers(String layers) {
+        this.layers = layers;
     }
 
-    public String getLAYERS() {
-        return LAYERS;
+    public String getProducttype() {
+        return producttype;
     }
 
-    public void setLAYERS(String LAYERS) {
-        this.LAYERS = LAYERS;
+    public void setProducttype(String producttype) {
+        this.producttype = producttype;
     }
 
-    public String getPRODUCTTYPE() {
-        return PRODUCTTYPE;
+    public String getSalesarea() {
+        return salesarea;
     }
 
-    public void setPRODUCTTYPE(String PRODUCTTYPE) {
-        this.PRODUCTTYPE = PRODUCTTYPE;
+    public void setSalesarea(String salesarea) {
+        this.salesarea = salesarea;
     }
 
-    public String getSALESAREA() {
-        return SALESAREA;
+    public String getCustomprocess() {
+        return customprocess;
     }
 
-    public void setSALESAREA(String SALESAREA) {
-        this.SALESAREA = SALESAREA;
+    public void setCustomprocess(String customprocess) {
+        this.customprocess = customprocess;
     }
 
-    public String getCUSTOMPROCESS() {
-        return CUSTOMPROCESS;
+    public String getCustomlevel() {
+        return customlevel;
     }
 
-    public void setCUSTOMPROCESS(String CUSTOMPROCESS) {
-        this.CUSTOMPROCESS = CUSTOMPROCESS;
+    public void setCustomlevel(String customlevel) {
+        this.customlevel = customlevel;
     }
 
-    public String getCUSTOMLEVEL() {
-        return CUSTOMLEVEL;
+    public String getRevokeresult() {
+        return revokeresult;
     }
 
-    public void setCUSTOMLEVEL(String CUSTOMLEVEL) {
-        this.CUSTOMLEVEL = CUSTOMLEVEL;
+    public void setRevokeresult(String revokeresult) {
+        this.revokeresult = revokeresult;
     }
 
-    public String getREVOKERESULT() {
-        return REVOKERESULT;
+    public List<BlameProcess> getBlameProcesses() {
+        return blameProcesses;
     }
 
-    public void setREVOKERESULT(String REVOKERESULT) {
-        this.REVOKERESULT = REVOKERESULT;
+    public void setBlameProcesses(List<BlameProcess> blameProcesses) {
+        this.blameProcesses = blameProcesses;
     }
 
-    public String getBLAME_OPER() {
-        return BLAME_OPER;
+    public List<BlameProcess> getoutBlameProcesses() {
+        return outBlameProcesses;
     }
 
-    public void setBLAME_OPER(String BLAME_OPER) {
-        this.BLAME_OPER = BLAME_OPER;
+    public void setoutBlameProcesses(List<BlameProcess> outBlameProcesses) {
+        this.outBlameProcesses = outBlameProcesses;
     }
 
     @Override
     public String toString() {
         return "CustomerComplaint{" +
-                "BASE_UID='" + BASE_UID + '\'' +
-                ", WD_UID='" + WD_UID + '\'' +
-                ", WD_NO='" + WD_NO + '\'' +
-                ", CUSTOMCODE='" + CUSTOMCODE + '\'' +
-                ", CUSTOMER_ID='" + CUSTOMER_ID + '\'' +
-                ", DELIVERY='" + DELIVERY + '\'' +
-                ", CUSTOMNUMBER='" + CUSTOMNUMBER + '\'' +
-                ", CUSTOMDATE='" + CUSTOMDATE + '\'' +
-                ", MODEL='" + MODEL + '\'' +
-                ", ORDERHEAD='" + ORDERHEAD + '\'' +
-                ", ORDERLINE='" + ORDERLINE + '\'' +
-                ", NEW_COMPANY_ID='" + NEW_COMPANY_ID + '\'' +
-                ", OWN_DEPATMENT='" + OWN_DEPATMENT + '\'' +
-                ", DEFEDTDESC='" + DEFEDTDESC + '\'' +
-                ", BADDESC='" + BADDESC + '\'' +
-                ", RESPON='" + RESPON + '\'' +
-                ", SALESPRICE='" + SALESPRICE + '\'' +
-                ", CURRENCY='" + CURRENCY + '\'' +
-                ", BADCATEGORY='" + BADCATEGORY + '\'' +
-                ", CLAIMTYPES='" + CLAIMTYPES + '\'' +
-                ", LEASTS='" + LEASTS + '\'' +
-                ", CATEGORY='" + CATEGORY + '\'' +
-                ", NUMBERSET='" + NUMBERSET + '\'' +
-                ", CUSTOMER_NUMBER='" + CUSTOMER_NUMBER + '\'' +
-                ", NUMBERPCS='" + NUMBERPCS + '\'' +
-                ", SHIPSET='" + SHIPSET + '\'' +
-                ", SHIPPCS='" + SHIPPCS + '\'' +
-                ", LAYERS='" + LAYERS + '\'' +
-                ", PRODUCTTYPE='" + PRODUCTTYPE + '\'' +
-                ", SALESAREA='" + SALESAREA + '\'' +
-                ", CUSTOMPROCESS='" + CUSTOMPROCESS + '\'' +
-                ", CUSTOMLEVEL='" + CUSTOMLEVEL + '\'' +
-                ", REVOKERESULT='" + REVOKERESULT + '\'' +
-                ", BLAME_OPER='" + BLAME_OPER + '\'' +
+                "base_uid='" + base_uid + '\'' +
+                ", customcode='" + customcode + '\'' +
+                ", customer_id='" + customer_id + '\'' +
+                ", customnumber='" + customnumber + '\'' +
+                ", model='" + model + '\'' +
+                ", orderhead='" + orderhead + '\'' +
+                ", orderline='" + orderline + '\'' +
+                ", new_company_id='" + new_company_id + '\'' +
+                ", defedtdesc='" + defedtdesc + '\'' +
+                ", salesprice='" + salesprice + '\'' +
+                ", currency='" + currency + '\'' +
+                ", badcategory='" + badcategory + '\'' +
+                ", claimtypes='" + claimtypes + '\'' +
+                ", leasts='" + leasts + '\'' +
+                ", category='" + category + '\'' +
+                ", shippcs='" + shippcs + '\'' +
+                ", layers='" + layers + '\'' +
+                ", producttype='" + producttype + '\'' +
+                ", salesarea='" + salesarea + '\'' +
+                ", customprocess='" + customprocess + '\'' +
+                ", customlevel='" + customlevel + '\'' +
+                ", revokeresult='" + revokeresult + '\'' +
+                ", status='" + status + '\'' +
+                ", blameProcesses=" + blameProcesses +
+                ", outBlameProcesses=" + outBlameProcesses +
                 '}';
     }
 }

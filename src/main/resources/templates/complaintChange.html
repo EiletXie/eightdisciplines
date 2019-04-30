@@ -1,0 +1,545 @@
+<!DOCTYPE html >
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+
+    <!-- Bootstrap -->
+    <!-- <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.css/bootstrap.min.css" rel="stylesheet">-->
+    <link  th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.min.css}" rel="stylesheet" />
+    <script th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js" ></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <base th:href="${#request.getContextPath()}+'/'">
+    <title>客诉修改</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/8d.ico}" />
+    <style type="text/css">
+
+
+        #brand{
+            width: 200px;
+            height: 40px;
+        }
+
+        #userImg{
+            width: 150px;
+            height: 150px;
+        }
+
+        body {
+            padding-top:70px;
+            padding-bottom: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        td,th{
+            text-align: center;
+            align:middle;
+        }
+    </style>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <!--图标 -->
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            <img alt="Brand" th:src="@{/images/suntak.jpg}" class="img-thumbnail" id="brand">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-1 col-md-offset-6">
+                <button type="button" class="btn btn-warning btn-sm navbar-btn" id="loginBtn">
+                    <span  class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                    Login</button>
+            </div>
+        </div>
+        </div>
+    </nav>
+</head>
+
+<body>
+<!-- 客诉编辑模态框 -->
+<div class="modal fade" id="complaintUpdateModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" >客诉修改</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="complaintForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">CAR</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" name="leasts" id="leasts_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">生产型号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="model" id="model_update_static" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户编码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="customcode" id="customcode_update_static" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">投诉类别</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="claimtypes" id="claimtypes_select">
+                                <option value="5039">镀层厚度</option>
+                                <option value="5061">成品仓</option>
+                                <option value="5062">销售</option>
+                                <option value="5063">物流</option>
+                                <option value="5060">其它</option>
+                                <option value="5064">盲孔开路</option>
+                                <option value="5065">保护胶</option>
+                                <option value="5066">阻抗</option>
+                                <option value="5067">离子污染</option>
+                                <option value="5068">厂内甩期</option>
+                                <option value="5041">尺寸测量</option>
+                                <option value="5040">包装</option>
+                                <option value="5042">出货报告</option>
+                                <option value="5044">分层爆板</option>
+                                <option value="5045">可焊性</option>
+                                <option value="5046">开短路</option>
+                                <option value="5048">设计</option>
+                                <option value="5049">外观</option>
+                                <option value="5051">翘曲</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">是否计入</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="customprocess" id="customprocess_select">
+                                <option value="5001">计入客诉</option>
+                                <option value="5003">不计入客诉</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">不计入理由</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="revokeresult" id="revokeresult_select">
+                                <option value="50034">确定为客户误投诉</option>
+                                <option value="50035">是真实投诉但责任为客户</option>
+                                <option value="50036">前期投诉已处理完毕并已入8D系统做正式记录，客户后来提出额外扣款或补板而补录系统</option>
+                                <option value="50037">崇达主动围堵（成品仓、香港仓、客户端产品）走8D系统补货或扣款</option>
+                                <option value="50038">同型号，同问题，多个PO入系统，不按PO记录投诉</option>
+                                <option value="50039">协同客户返工</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">缺陷描述</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="defedtdesc" id="defedtdesc_update_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            责任产生工序
+                            <div id="blame_list_select"></div>
+                            <button type="button" class="btn btn-default btn-sm">新增</button>
+                        </label>
+                        <div class="col-sm-12">
+                            <table class="table table-hover table-bordered" id="blameProcesses_table">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>工序名称</th>
+                                    <th>工序代码</th>
+                                    <th>具体内容</th>
+                                    <th>工序类型</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">责任流出工序</label>
+                        <div class="col-sm-12">
+                            <table class="table table-hover table-bordered" id="outBlameProcesses_table">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>工序名称</th>
+                                    <th>工序代码</th>
+                                    <th>具体内容</th>
+                                    <th>工序类型</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">修改原因</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"  id="reason_update_input">
+                            <span class="help-block" id="update_reason_help"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="complaint_update_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="complaintDeleteModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" >客诉删除</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="complaintDeleteForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">CAR</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" name="leasts" id="leasts_delete_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">生产型号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="model" id="model_delete_static" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户编码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="customcode" id="customcode_delete_static" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">删除原因</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"  id="reason_delete_input">
+                            <span class="help-block" id="delete_reason_help"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="complaint_delete_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <!-- 左侧列表项 -->
+    <div class="col-md-2">
+        <div class="panel panel-primary">
+            <div class="panel-heading">个人信息</div>
+            <div class="panel-body" align="center">
+                <img th:src="@{/images/user-image.png}" class="img-responsive img-rounded img-thumbnail" id="userImg" />
+                <p class="text-center text-primary" th:text="${'欢迎，' + session.user.alternateName}">&nbsp;欢迎来到客诉历史记录界面</p>
+                <p class="text-center text-warning" th:text="${'Email：' + session.user.email}">&nbsp;</p>
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">选择操作</div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="complaint/complaintChange">客诉修改</a></li>
+                    <li><a href="record/complaintRecord">历史记录统计</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form  th:action="@{/complaint/complaintInfo}" th:object="${customerComplaint}" method="post">
+                    <div class="form-group">
+                        <label for="leasts">CAR号：</label>
+                        <input type="text"  th:field="*{leasts}" class="form-control" id="leasts" placeholder="输入客诉CAR号">
+                    </div>
+
+                    <button type="submit" class="btn btn-default">查询</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 显示表格数据 -->
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered" id="leasts_table">
+                    <thead>
+                    <tr class="text-center">
+                        <th>CAR</th>
+                        <th>客户编码</th>
+                        <th>是否计入</th>
+                        <th>不计入理由</th>
+                        <th>投诉类别</th>
+                        <th>缺陷描述</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:remove="all-but-first">
+                    <tr th:each="c : ${complaintList}" class="text-center">
+                        <th th:text="${c.leasts}">CAR</th>
+                        <th th:text="${c.customcode}">客户编码</th>
+                        <th th:text="${c.customprocess}">是否计入</th>
+                        <th th:text="${c.revokeresult}">不计入理由</th>
+                        <th th:text="${c.claimtypes}">投诉类别</th>
+                        <th th:text="${c.defedtdesc}">缺陷描述</th>
+                        <th th:text="${c.status == 'T' ? '已删除' : '在流程中'}">状态</th>
+                        <th>
+                            <button th:value="${c.base_uid}"  class="btn btn-primary btn-sm complaint-edit">编辑</button>
+                            <button th:value="${c.base_uid}"  class="btn btn-danger btn-sm  complaint-del">删除</button>
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+
+    </div>
+</div>
+
+
+<!-- Footer -->
+<div th:fragment="footer" class="navbar-fixed-bottom">
+    <div class="container text-center">
+        崇达技术股份有限公司 © Suntak 8D
+    </div>
+
+</div>
+<a th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'} "
+   id="contextPath"></a>
+<script type="text/javascript">
+    var contextPath = $('#contextPath').attr('href');
+    // 初始化责任工序的 检测数据 ，用该数据记录每次操作的变动
+    var blameProcessesList,outBlameProcessesList;
+
+
+
+
+    $(document).on("click",".complaint-edit",function(){
+             var base_uid = $(this).val();
+             $.ajax({
+                 url:contextPath+"/complaint/editById",
+                 type:"POST",
+                 data:"base_uid=" + base_uid,
+                 dataType:"json",
+                 success:function(result){
+                    var complaint = result.extend.complaint;
+                     $("#complaintUpdateModal").modal({
+                         backdrop:"static"
+                     });
+                     //给更新的按钮赋值一个base_uid的属性
+                     $("#complaint_update_btn").attr("edit-id",complaint.base_uid);
+
+                     $("#leasts_update_static").text(complaint.leasts);
+                     $("#customcode_update_static").val(complaint.customcode);
+                     $("#model_update_static").val(complaint.model);
+                     $("#claimtypes_select").val(complaint.claimtypes);
+                     $("#customprocess_select").val(complaint.customprocess);
+                     $("#revokeresult_select").val(complaint.revokeresult);
+                     $("#defedtdesc_update_input").val(complaint.defedtdesc);
+
+                     console.log(complaint);
+                     // 赋值给 记录责任工序的 检测数据
+                     blameProcessesList = complaint.blameProcesses;
+                     // 遍历 责任工序的数据
+                     var blameProcesses = complaint.blameProcesses;
+                     $.each(blameProcesses,function(index,item){
+                         var descTd = $("<td></td>").append(item.operation_description);
+                         var codeTd = $("<td class=\"operation_code\"></td>").append(item.standard_operation_code);
+                         codeTd.attr("code_value",item.standard_operation_code);
+                         var contentInput = $("<input type=\"text\"/>").attr("value",item.blame_content);
+                         var contentTd = $("<td></td>").append(contentInput);
+                         var typeTd = $("<td></td>").append(item.blame_type);
+
+                         var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm blame_del_btn")
+                             .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+
+                         var btnTd = $("<td></td>").append(delBtn);
+
+                         $("<tr></tr>").append(descTd)
+                             .append(codeTd)
+                             .append(contentTd)
+                             .append(typeTd)
+                             .append(btnTd)
+                             .appendTo("#blameProcesses_table tbody");
+                     });
+
+                     outBlameProcessesList = complaint.outBlameProcesses;
+
+                     var outBlameProcesses = complaint.outBlameProcesses;
+                     $.each(outBlameProcesses,function(index,item){
+                         var descTd = $("<td></td>").append(item.operation_description);
+                         var codeTd = $("<td class=\"operation_code\"></td>").append(item.standard_operation_code);
+                         codeTd.attr("code_value",item.standard_operation_code);
+                         var contentInput = $("<input type=\"text\"/>").attr("value",item.blame_content);
+                         var contentTd = $("<td></td>").append(contentInput);
+                         var typeTd = $("<td></td>").append(item.blame_type);
+
+                         var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm outBlame_del_btn")
+                             .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+
+                         var btnTd = $("<td></td>").append(delBtn);
+
+                         $("<tr></tr>").append(descTd)
+                             .append(codeTd)
+                             .append(contentTd)
+                             .append(typeTd)
+                             .append(btnTd)
+                             .appendTo("#outBlameProcesses_table tbody");
+                     });
+                 }
+             });
+         });
+
+     function generateOptionsSelect(base_uid){
+         $("#")
+     }
+
+    // 同步 责任产生工序的数据
+    $(document).on("click",".blame_del_btn",function(){
+        var blame_code = $(this).parents("tr").find(".operation_code").attr("code_value");
+
+        blameProcessesList.forEach(function(item, index, arr) {
+            if(item.standard_operation_code == blame_code) {
+                arr.splice(index, 1);
+            }
+        });
+        $(this).parent().parent().hide();
+        return false;
+    });
+
+    // 同步 责任流出工序的数据
+    $(document).on("click",".outBlame_del_btn",function(){
+        var outBlame_code = $(this).parents("tr").find(".operation_code").attr("code_value");
+
+        outBlameProcessesList.forEach(function(item, index, arr) {
+            if(item.standard_operation_code == outBlame_code) {
+                arr.splice(index, 1);
+            }
+        });
+        $(this).parent().parent().hide();
+        return false;
+    });
+
+    $(document).on("click",".complaint-del",function(){
+             var base_uid = $(this).val();
+             $.ajax({
+                 url:contextPath+"/complaint/editById",
+                 type:"POST",
+                 data:"base_uid=" + base_uid,
+                 dataType:"json",
+                 success:function(result){
+                     var complaint = result.extend.complaint;
+                     $("#complaintDeleteModal").modal({
+                         backdrop:"static"
+                     });
+                     //给更新的按钮赋值一个base_uid的属性
+                     $("#complaint_delete_btn").attr("del-id",complaint.base_uid);
+
+                     $("#leasts_delete_static").text(complaint.leasts);
+                     $("#customcode_delete_static").val(complaint.customcode);
+                     $("#model_delete_static").val(complaint.model);
+                 }
+             });
+         });
+
+    $("#complaint_update_btn").click(function(){
+        $("#update_reason_help").parent().parent().attr("class","");
+        $("#update_reason_help").text("");
+
+        if($("#reason_update_input").val() == ""){
+            $("#update_reason_help").text("原因不能为空！");
+            $("#update_reason_help").parent().parent().attr("class","has-error");
+            return;
+        }
+
+        $.ajax({
+            url:contextPath+"/complaint/editComplaint?base_uid="+$(this).attr("edit-id") + "&reason="+$("#reason_update_input").val(),
+            type:"POST",
+            data:$("#complaintForm").serialize(),
+            success:function(result){
+                alert("更新成功！");
+                window.location.reload();
+            }
+        });
+    });
+
+    $("#complaint_delete_btn").click(function(){
+
+        $("#delete_reason_help").parent().parent().attr("class","");
+        $("#delete_reason_help").text("");
+
+        if($("#reason_delete_input").val() == ""){
+            $("#delete_reason_help").text("原因不能为空！");
+            $("#delete_reason_help").parent().parent().attr("class","has-error");
+            return;
+        }
+
+        $.ajax({
+            url:contextPath+"/complaint/delComplaint?base_uid="+$(this).attr("del-id") + "&reason="+$("#reason_delete_input").val(),
+            type:"DELETE",
+            success:function(result){
+                if(result.code == 100) {
+                    alert("删除成功");
+                    window.location.reload();
+                } else{
+                    alert(result.extend.message);
+                }
+            }
+        });
+    });
+
+         $("#loginBtn").click(function(){
+             window.location.href = contextPath;
+         });
+</script>
+
+</body>
+</html>

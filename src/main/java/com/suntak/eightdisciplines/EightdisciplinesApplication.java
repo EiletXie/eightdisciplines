@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.suntak.eightdisciplines.dao")
-public class EightdisciplinesApplication {
+public class EightdisciplinesApplication  {
 
     public static void main(String[] args) {
         SpringApplication.run(EightdisciplinesApplication.class, args);

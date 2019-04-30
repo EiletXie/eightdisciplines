@@ -1,0 +1,432 @@
+<!DOCTYPE html >
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <!-- datetimepicker -->
+    <script type="text/javascript" th:src="@{/js/jquery-ui-1.11.4/jquery-ui.js}"></script>
+    <link  th:href="@{/js/jquery-ui-1.11.4/jquery-ui.css}" rel="stylesheet" />
+    <!-- Bootstrap -->
+    <!-- <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.css/bootstrap.min.css" rel="stylesheet">-->
+    <link  th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.min.css}" rel="stylesheet" />
+    <script th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js" ></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <base th:href="${#request.getContextPath()}+'/'">
+    <title>客诉历史修改记录界面</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/8d.ico}" />
+    <style type="text/css">
+
+
+        #brand{
+            width: 200px;
+            height: 40px;
+        }
+
+        #userImg{
+            width: 150px;
+            height: 150px;
+        }
+
+        body {
+            padding-top:70px;
+            padding-bottom: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        td,th{
+            text-align: center;
+            align:middle;
+        }
+    </style>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <!--图标 -->
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            <img alt="Brand" th:src="@{/images/suntak.jpg}" class="img-thumbnail" id="brand">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-1 col-md-offset-6">
+                <button type="button" class="btn btn-warning btn-sm navbar-btn" id="loginBtn">
+                    <span  class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                    Login</button>
+            </div>
+        </div>
+        </div>
+    </nav>
+</head>
+
+<body>
+<!-- 客诉编辑模态框 -->
+<div class="modal fade" id="recordUpdateModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" >客诉修改记录明细</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="complaintForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">修改人</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="username_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">工号</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="empid_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">CAR</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="leasts_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">客户编码</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="customercode_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">内容</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="content_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">原因</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="reason_update_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">时间</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="createdate_update_static"></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 左侧列表项 -->
+    <div class="col-md-2">
+        <div class="panel panel-primary">
+            <div class="panel-heading">个人信息</div>
+            <div class="panel-body" align="center">
+                <img th:src="@{/images/user-image.png}" class="img-responsive img-rounded img-thumbnail" id="userImg" />
+                <p class="text-center text-primary" th:text="${'欢迎，' + session.user.alternateName}">&nbsp;欢迎来到客诉历史记录界面</p>
+                <p class="text-center text-warning" th:text="${'Email：' + session.user.email}">&nbsp;</p>
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">选择操作</div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="complaint/complaintChange">客诉修改</a></li>
+                    <li><a href="record/complaintRecord">历史记录统计</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <label for="startdate">时间：</label>
+                            <input  type="text"  id="startdate" class="choosedate" >-
+                            <input  type="text"  id="enddate" class="choosedate" >
+                    </div>
+                    <div class="form-group">
+                        <label for="record_leasts">CAR号：</label>
+                        <input  type="text"  id="record_leasts">
+                    </div>
+                    <button type="button" class="btn btn-default" id="record_find_btn">查询</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 显示表格数据 -->
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered" id="records_table">
+                    <thead>
+                    <tr class="text-center">
+                        <th>修改人</th>
+                        <th>工号</th>
+                        <th>CAR号</th>
+                        <th>客户编码</th>
+                        <th>时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <!-- 分页文字信息 -->
+                <div class="col-md-12" id="page_info_area"></div>
+                <!-- 分页条信息 -->
+                <div class="col-md-8 col-md-offset-4" id="page_nav_area">
+                </div>
+            </div>
+    </div>
+
+
+    </div>
+</div>
+
+
+<!-- Footer -->
+<div th:fragment="footer" class="navbar-fixed-bottom">
+    <div class="container text-center">
+        崇达技术股份有限公司 © Suntak 8D
+    </div>
+</div>
+
+
+<a th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'} "
+   id="contextPath"></a>
+<script type="text/javascript">
+    var contextPath = $('#contextPath').attr('href');
+    var totalRecord,currentPage;
+    //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
+    $(function(){
+
+        var  nowday = new Date().format("yyyy-MM-dd");
+        $("#startdate").val(nowday);
+        $("#enddate").val(nowday);
+
+
+
+        //页面一加载，跳转到第一页
+        to_page(1);
+    });
+    Date.prototype.format =function(format)
+    {
+        var o = {
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(), //day
+            "h+" : this.getHours(), //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+            "S" : this.getMilliseconds() //millisecond
+        }
+        if(/(y+)/.test(format)){
+            console.log(RegExp.$1.length);
+            format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4- RegExp.$1.length));
+        }
+        for(var k in o){
+            if(new RegExp("("+ k +")").test(format)){
+                format = format.replace(RegExp.$1,RegExp.$1.length==1? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+            }
+        }
+        return format;
+    }
+
+    function to_page(pn){
+       var start_day = $("#startdate").val();
+       var end_day = $("#enddate").val();
+        $.ajax({
+            url:contextPath+"/record/records",
+            data:{pn :pn,
+                  startdate:start_day,
+                  enddate:end_day,
+                  leasts : $("#record_leasts").val()},
+            type:"POST",
+            success:function(result){
+                //console.log(result);
+                //1.在页面解析并显示员工数据
+                build_records_table(result);
+                //2.解析并显示分页信息
+                build_page_info(result);
+                //3.解析显示分页条数据
+                build_page_nav(result);
+            }
+        });
+    }
+
+    //建立用户的表格数据
+    function build_records_table(result){
+        //先清空表格数据
+        $("#records_table tbody").empty();
+        var records = result.extend.pageInfo.list;
+        $.each(records,function(index,item){
+            var usernameTd = $("<td></td>").append(item.modify_username);
+            var empIdTd = $("<td></td>").append(item.emp_id);
+            var leastsTd = $("<td></td>").append(item.leasts);
+            var custcodeTd = $("<td></td>").append(item.customercode);
+            var dateTd = $("<td></td>").append(item.create_date);
+
+            var editBtn = $("<button></button>").addClass("btn btn-primary btn-sm edit_btn")
+                .append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("查看");
+            //为编辑按钮添加自定义属性，表示当前员工id
+            editBtn.attr("edit-id",item.rid);
+            var btnTd = $("<td></td>").append(editBtn);
+
+            $("<tr></tr>").append(usernameTd)
+                .append(empIdTd)
+                .append(leastsTd)
+                .append(custcodeTd)
+                .append(dateTd)
+                .append(btnTd)
+                .appendTo("#records_table tbody");
+        });
+    }
+
+    function build_page_info(result){
+        $("#page_info_area").empty();
+        $("#page_info_area").append("当前"+result.extend.pageInfo.pageNum
+            +"页，总页数"+result.extend.pageInfo.pages
+            +"页，总"+ result.extend.pageInfo.total +"条数");
+        totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
+    }
+
+    //解析显示分页条 ,点击分页有相应的功能跳转
+    function build_page_nav(result){
+        $("#page_nav_area").empty();
+        //page_nav_area
+        var ul = $("<ul></ul>").addClass("pagination");
+
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页"));
+        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+        if(result.extend.pageInfo.hasPreviousPage == false){
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        }else{
+            //为元素添加点击翻页的=事件
+            firstPageLi.click(function(){
+                to_page(1);
+            });
+            prePageLi.click(function(){
+                to_page(result.extend.pageInfo.pageNum - 1);
+            });
+        }
+
+        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页")); //.attr("href","#")
+        if(result.extend.pageInfo.hasNextPage == false){
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        }else{
+            lastPageLi.click(function(){
+                to_page(result.extend.pageInfo.pages);
+            });
+            nextPageLi.click(function(){
+                to_page(result.extend.pageInfo.pageNum + 1);
+            });
+        }
+
+        ul.append(firstPageLi).append(prePageLi);
+        $.each(result.extend.pageInfo.navigatepageNums,function(index,item){
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if(result.extend.pageInfo.pageNum == item){
+                numLi.addClass("active");
+            }
+            numLi.click(function(){
+                to_page(item);
+            });
+            ul.append(numLi);
+        });
+        ul.append(nextPageLi).append(lastPageLi);
+
+        var navEle = $("<nav></nav>").append(ul);
+        navEle.appendTo("#page_nav_area");
+    }
+
+    $(".choosedate").datepicker({dateFormat: "yy-mm-dd"}); //{dateFormat: "yy-mm-dd"}
+
+
+    // 选择时间，点击查询按钮
+    $("#record_find_btn").click(function(){
+        $.ajax({
+            url:contextPath+"/record/records",
+            type:"POST",
+            data:{startdate : $("#startdate").val(),
+                  enddate : $("#enddate").val(),
+                  leasts : $("#record_leasts").val()
+                 },
+            success:function(result){
+                //1.在页面解析并显示员工数据
+                build_records_table(result);
+                //2.解析并显示分页信息
+                build_page_info(result);
+                //3.解析显示分页条数据
+                build_page_nav(result);
+            }
+        });
+    });
+
+    $(document).on("click",".edit_btn",function(){
+        var rid = $(this).attr("edit-id");
+        $.ajax({
+            url:contextPath+"/record/recordByRid",
+            type:"POST",
+            data:"rid=" + rid,
+            dataType:"json",
+            success:function(result){
+                var record = result.extend.record;
+                $("#recordUpdateModal").modal({
+                    backdrop:"static"
+                });
+
+                $("#leasts_update_static").text(record.leasts);
+                $("#customercode_update_static").text(record.customercode);
+                $("#content_update_static").text(record.content);
+                $("#reason_update_static").text(record.reason);
+                $("#createdate_update_static").text(record.create_date);
+                $("#username_update_static").text(record.modify_username);
+                $("#empid_update_static").text(record.emp_id);
+            }
+        });
+    });
+
+         $("#loginBtn").click(function(){
+             window.location.href = contextPath;
+         });
+</script>
+
+</body>
+</html>
