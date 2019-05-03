@@ -32,6 +32,8 @@ public class CustomerComplaint {
     private String customprocess; //处理类别
     private String customlevel; // 客诉等级
     private String revokeresult; // 不计入理由
+    private String mfg_org_id; // 组织ID
+    private String inventory_item_id; // 型号ID
 
     private String status; // 表单状态
     private List<BlameProcess> blameProcesses; // 责任产生工序
@@ -229,11 +231,28 @@ public class CustomerComplaint {
         this.blameProcesses = blameProcesses;
     }
 
-    public List<BlameProcess> getoutBlameProcesses() {
+
+    public String getMfg_org_id() {
+        return mfg_org_id;
+    }
+
+    public void setMfg_org_id(String mfg_org_id) {
+        this.mfg_org_id = mfg_org_id;
+    }
+
+    public String getInventory_item_id() {
+        return inventory_item_id;
+    }
+
+    public void setInventory_item_id(String inventory_item_id) {
+        this.inventory_item_id = inventory_item_id;
+    }
+
+    public List<BlameProcess> getOutBlameProcesses() {
         return outBlameProcesses;
     }
 
-    public void setoutBlameProcesses(List<BlameProcess> outBlameProcesses) {
+    public void setOutBlameProcesses(List<BlameProcess> outBlameProcesses) {
         this.outBlameProcesses = outBlameProcesses;
     }
 
@@ -262,6 +281,8 @@ public class CustomerComplaint {
                 ", customprocess='" + customprocess + '\'' +
                 ", customlevel='" + customlevel + '\'' +
                 ", revokeresult='" + revokeresult + '\'' +
+                ", mfg_org_id='" + mfg_org_id + '\'' +
+                ", inventory_item_id='" + inventory_item_id + '\'' +
                 ", status='" + status + '\'' +
                 ", blameProcesses=" + blameProcesses +
                 ", outBlameProcesses=" + outBlameProcesses +

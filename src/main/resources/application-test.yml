@@ -1,15 +1,24 @@
 server:
-  port: 8002
+  port: 8888
   servlet:
-    context-path: /EightDisciplines
+    context-path: /EightDesciplines
 
-# 排除数据源配置
+
 spring:
   datasource:
-    url: jdbc:oracle:thin:@192.168.0.217:1521:orcl
-    driver: oracle.jdbc.driver.OracleDriver
-    username: spfs
-    password: password
+    hikari:
+      8d:
+        jdbc-url: jdbc:oracle:thin:@192.168.0.217:1521:orcl
+        driver-class-name: oracle.jdbc.driver.OracleDriver
+        username: spfs
+        password: password
+      # ERP
+      erp:
+        jdbc-url: jdbc:oracle:thin:@10.1.100.12:1521:PROD2
+        driver-class-name: oracle.jdbc.driver.OracleDriver
+        username: appsclone
+        password: appsclone
+
 
   thymeleaf:
     #<!-- 关闭thymeleaf缓存 开发时使用 否则没有实时画面-->
@@ -24,16 +33,10 @@ spring:
     mode: LEGACYHTML5
     prefix: classpath:/templates/
     suffix: .html
+    encoding: utf-8
 
-limit:
-  minMoney: 20
-  maxMoney: 2000
-  description: 最小${limit.minMoney},最大${limit.maxMoney}
 
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  configuration:
-    call-setters-on-nulls: true
+
 
 
 

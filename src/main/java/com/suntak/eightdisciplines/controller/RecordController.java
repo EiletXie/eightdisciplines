@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.suntak.eightdisciplines.entity.Msg;
 import com.suntak.eightdisciplines.entity.Record;
-import com.suntak.eightdisciplines.service.RecordService;
+import com.suntak.eightdisciplines.db8d.service.RecordService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

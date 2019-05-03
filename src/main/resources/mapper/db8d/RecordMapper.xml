@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suntak.eightdisciplines.db8d.dao.RecordDao">
+    <select id="getRecordByOptions" resultType="com.suntak.eightdisciplines.entity.Record">
+        SELECT t.*
+        FROM modify_complaint_history t
+        WHERE 1=1
+        <![CDATA[ AND t.create_date >=  #{startdate,jdbcType=DATE} ]]>
+        <![CDATA[ AND t.create_date <= #{enddate,jdbcType=DATE} ]]>
+        <if test='leasts != null and leasts != ""'>
+            AND t.leasts = #{leasts}
+        </if>
+        ORDER BY t.create_date DESC
+    </select>
+
+    <insert id="addRecord" useGeneratedKeys="true"  keyProperty="rid">
+          INSERT INTO modify_complaint_history (rid,modify_username,emp_id,create_date,leasts,customercode,content,reason)
+          VALUES (SEQ_MODIFY_COMPLAINT_HISTORY.NEXTVAL,#{modify_username},#{emp_id},#{create_date},#{leasts},#{customercode},#{content},#{reason})
+	</insert>
+
+    <select id="getRecordByRid" resultType="com.suntak.eightdisciplines.entity.Record">
+        SELECT *
+		FROM modify_complaint_history t
+		WHERE t.rid = #{rid}
+	</select>
+
+
+</mapper>

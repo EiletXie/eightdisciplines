@@ -1,11 +1,11 @@
 package com.suntak.eightdisciplines.controller;
 
-import com.suntak.eightdisciplines.entity.CustomerComplaint;
-import com.suntak.eightdisciplines.entity.Msg;
-import com.suntak.eightdisciplines.entity.Record;
-import com.suntak.eightdisciplines.entity.User;
-import com.suntak.eightdisciplines.service.CustomerComplaintService;
-import com.suntak.eightdisciplines.service.RecordService;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.suntak.eightdisciplines.dbErp.service.CommonUtilsService;
+import com.suntak.eightdisciplines.entity.*;
+import com.suntak.eightdisciplines.db8d.service.CustomerComplaintService;
+import com.suntak.eightdisciplines.db8d.service.RecordService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +27,9 @@ public class CustomerComplaintController {
 
     @Resource
     private RecordService recordService;
+
+    @Resource
+    private CommonUtilsService commonUtilsService;
 
 
     @PostMapping("/complaintInfo")
@@ -60,32 +63,49 @@ public class CustomerComplaintController {
     /**
      * 更新方法，并且生成修改历史记录
      *
-     * @param complaint
-     * @param reason
      * @param session
      * @return
      */
     @ResponseBody
     @PostMapping("/editComplaint")
-    public Msg editComplaint(CustomerComplaint complaint, @RequestParam("reason") String reason, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        String base_uid = complaint.getBase_uid();
+    public Msg editComplaint(@RequestBody JSONObject jsonObject, HttpSession session) throws Exception{
+         User user = (User) session.getAttribute("user");
+        String reason = jsonObject.getString("reason");
+        JSONArray complaint = jsonObject.getJSONArray("complaint");
+
+        System.out.println(complaint);
+        List<BlameProcess> blameProcessList = jsonObject.getJSONArray("blameList").toJavaList(BlameProcess.class);
+        List<BlameProcess> outBlameProcessList = jsonObject.getJSONArray("outBlameList").toJavaList(BlameProcess.class);
+
+        // 新建一个现在的complaint
+        CustomerComplaint nowComplaint = new CustomerComplaint();
+        nowComplaint.setBase_uid(jsonObject.getString("base_uid"));
+        nowComplaint.setModel(complaint.getJSONObject(0).get("value").toString());
+        nowComplaint.setCustomcode(complaint.getJSONObject(1).get("value").toString());
+        nowComplaint.setClaimtypes(complaint.getJSONObject(2).get("value").toString());
+        nowComplaint.setCustomprocess(complaint.getJSONObject(3).get("value").toString());
+        nowComplaint.setRevokeresult(complaint.getJSONObject(4).get("value").toString());
+        nowComplaint.setDefedtdesc(complaint.getJSONObject(5).get("value").toString());
+        nowComplaint.setOutBlameProcesses(outBlameProcessList);
+        nowComplaint.setBlameProcesses(blameProcessList);
+        System.out.println("现在的客诉对象" + nowComplaint);
+
         if (!"".equals(user.getUsername()) && user.getUsername() != null) {
             Record record = new Record();
             record.setModify_username(user.getAlternateName()); // 这里改成 使用姓名
             record.setEmp_id(user.getEmpId());
             record.setReason(reason);
-            record.setCustomercode(complaint.getCustomcode());
-            CustomerComplaint oldComplaint = customerComplaintService.getComplaintByBaseUid(complaint.getBase_uid());
+            CustomerComplaint oldComplaint = customerComplaintService.getComplaintByBaseUid(jsonObject.getString("base_uid"));
+            record.setCustomercode(oldComplaint.getCustomcode());
             record.setLeasts(oldComplaint.getLeasts());
             // 将变更内容进行封装
-            String content = customerComplaintService.getComplaintChangeContent(complaint);
+            String content = customerComplaintService.getComplaintChangeContent(nowComplaint);
             record.setContent(content);
             record.setCreate_date(new Date());
             System.out.println(complaint);
             System.out.println(record);
             recordService.addRecord(record);
-            customerComplaintService.updateComplaint(complaint);
+            customerComplaintService.updateComplaint(nowComplaint);
             return Msg.success();
         } else
             return Msg.fail().add("message", "登录超时，用户信息失效，请重新登录！");
@@ -100,9 +120,11 @@ public class CustomerComplaintController {
         if (base_uid != null) {
             c = customerComplaintService.getComplaintByBaseUid(base_uid);
         }
+        List<BlameProcess> blameSelectOptions = commonUtilsService.getBlameSelectOptions(c.getMfg_org_id(),c.getInventory_item_id());
+
         System.out.println("---------------------------------->");
         System.out.println(c);
-        return Msg.success().add("complaint", c);
+        return Msg.success().add("complaint", c).add("blameSelectOptions",blameSelectOptions);
     }
 
 
@@ -144,9 +166,5 @@ public class CustomerComplaintController {
     }
 
 
-    @GetMapping("/generateOption")
-    public Msg generateOptionsSelect(@RequestParam("org_id") String org_id,@RequestParam("item_id") String item_id) {
 
-        return Msg.success();
-    }
 }
