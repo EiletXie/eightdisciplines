@@ -7,11 +7,11 @@
 
 项目源码在我的GitHub上 https://github.com/GrasManXC/eightdisciplines
 
-项目技术背景： JDK1.8 + SpringBoot2.13 + ojbc7 + oracle10.1.0.1版本
+#项目技术背景： JDK1.8 + SpringBoot2.13 + ojbc7 + oracle10.1.0.1版本
 
-前后端框架： Bootstrap + jquery + Mybatis + thymeleaf
+#前后端框架： Bootstrap + jquery + Mybatis + thymeleaf
 
-
+该系统有多数据源的操作
 以jar包的形式发布在 linux服务器上运行
 
 由于未花时间做兼容性的操作，该修改系统只在google浏览器和火狐浏览器，别的浏览器容易出现js不兼容的问题。
