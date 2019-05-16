@@ -11,7 +11,7 @@ import java.util.List;
 public interface RecordDao {
     void addRecord(Record record);
 
-    List<Record> getRecordByOptions(Date startdate, Date enddate, @Param("leasts") String leasts);
+    List<Record> getRecordByOptions(@Param("startdate") Date startdate,@Param("enddate")  Date enddate, @Param("leasts") String leasts);
 
     Record getRecordByRid(String rid);
 

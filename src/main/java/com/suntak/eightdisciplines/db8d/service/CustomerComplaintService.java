@@ -2,7 +2,9 @@ package com.suntak.eightdisciplines.db8d.service;
 
 import com.suntak.eightdisciplines.entity.CustomerComplaint;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerComplaintService {
 
@@ -47,4 +49,11 @@ public interface CustomerComplaintService {
      * @return 内容前后变更情况
      */
     String getComplaintChangeContent(CustomerComplaint complaint);
+
+
+    /**
+     * 初始化下拉列表
+     * @return
+     */
+    HashMap<String,Object> generateSelectList();
 }

@@ -29,8 +29,6 @@ public class UserController {
         User u = userService.loginUser(user);
         map.addAttribute("customerComplaint",new CustomerComplaint());
         if(u != null) {
-            System.out.println(u);
-//            map.addAttribute("customerComplaint","CAR.NO-11122248");
             session.setAttribute("user",u);
             session.setAttribute("loginFlag",true);
             session.setMaxInactiveInterval(30*60);

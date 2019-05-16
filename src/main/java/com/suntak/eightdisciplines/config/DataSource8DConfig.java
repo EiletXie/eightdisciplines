@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  * 8D数据源配置
  */
 @Configuration
-@MapperScan(basePackages = "com.suntak.eightdisciplines.db8d.dao", sqlSessionTemplateRef  = "db8dSqlSessionTemplate")
+@MapperScan(basePackages = "com.suntak.eightdisciplines.db8d.dao", sqlSessionTemplateRef = "db8dSqlSessionTemplate")
 public class DataSource8DConfig {
 
     /**

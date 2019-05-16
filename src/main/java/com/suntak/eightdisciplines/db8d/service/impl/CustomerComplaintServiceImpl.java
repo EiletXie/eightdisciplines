@@ -8,7 +8,9 @@ import com.suntak.eightdisciplines.entity.CustomerComplaint;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 经过思考，决定将繁琐的业务也在业务层，而不是在控制层
@@ -59,6 +61,16 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
     }
 
     @Override
+    public  HashMap<String,Object> generateSelectList() {
+        List<Map<Object, Object>> type_list =  customerComplaintDao.generateClaimtypeList();
+        List<Map<Object, Object>> result_list =  customerComplaintDao.generateRevokeresultList();
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("type_list",type_list);
+        map.put("result_list",result_list);
+        return map;
+    }
+
+    @Override
     public String getComplaintChangeContent(CustomerComplaint complaint) {
 
         String base_uid = complaint.getBase_uid();
@@ -81,8 +93,10 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
         } else if (complaint.getRevokeresult() != null && !complaint.getRevokeresult().equals(oldComplaint.getRevokeresult())) {
             oldRevokeresult = customerComplaintDao.getMeaningByCode(oldComplaint.getRevokeresult(), "REVOKERESULT_ID");
             String Revokeresult = customerComplaintDao.getMeaningByCode(complaint.getRevokeresult(), "REVOKERESULT_ID");
-            if (oldComplaint.getRevokeresult() == "" || oldComplaint.getRevokeresult() == null)
+            if (oldComplaint.getRevokeresult() == "" || oldComplaint.getRevokeresult() == null) {
+                if(Revokeresult != null && !Revokeresult.equals(""))
                 content += "将不计入客诉理由： 由 空 改为 " + Revokeresult + "  ";
+            }
             else
                 content += "将不计入客诉理由： 由 " + oldRevokeresult + "  改为 " + Revokeresult + "  ";
         }

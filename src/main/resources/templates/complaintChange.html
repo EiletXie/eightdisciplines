@@ -114,25 +114,7 @@
                         <label class="col-sm-2 control-label">投诉类别</label>
                         <div class="col-sm-10">
                             <select class="form-control" name="claimtypes" id="claimtypes_select">
-                                <option value="5039">镀层厚度</option>
-                                <option value="5061">成品仓</option>
-                                <option value="5062">销售</option>
-                                <option value="5063">物流</option>
-                                <option value="5060">其它</option>
-                                <option value="5064">盲孔开路</option>
-                                <option value="5065">保护胶</option>
-                                <option value="5066">阻抗</option>
-                                <option value="5067">离子污染</option>
-                                <option value="5068">厂内甩期</option>
-                                <option value="5041">尺寸测量</option>
-                                <option value="5040">包装</option>
-                                <option value="5042">出货报告</option>
-                                <option value="5044">分层爆板</option>
-                                <option value="5045">可焊性</option>
-                                <option value="5046">开短路</option>
-                                <option value="5048">设计</option>
-                                <option value="5049">外观</option>
-                                <option value="5051">翘曲</option>
+
                             </select>
                         </div>
                     </div>
@@ -150,12 +132,7 @@
                         <div class="col-sm-10">
                             <select class="form-control" name="revokeresult" id="revokeresult_select">
                                 <option value=""></option>
-                                <option value="50034">确定为客户误投诉</option>
-                                <option value="50035">是真实投诉但责任为客户</option>
-                                <option value="50036">前期投诉已处理完毕并已入8D系统做正式记录，客户后来提出额外扣款或补板而补录系统</option>
-                                <option value="50037">崇达主动围堵（成品仓、香港仓、客户端产品）走8D系统补货或扣款</option>
-                                <option value="50038">同型号，同问题，多个PO入系统，不按PO记录投诉</option>
-                                <option value="50039">协同客户返工</option>
+
                             </select>
                         </div>
                     </div>
@@ -397,6 +374,31 @@
                 //给更新的按钮赋值一个base_uid的属性
                 $("#complaint_update_btn").attr("edit-id", complaint.base_uid);
 
+
+
+
+                // 加载 投诉类别 下拉列表
+                $("#claimtypes_select").empty();
+                var type_list = result.extend.type_list;
+                $.each(type_list, function (index, item) {
+                    var typeOption = $("<option></option>").append(item.item_value)
+                        .attr("value", item.item_key)
+                    typeOption.appendTo("#claimtypes_select");
+                });
+
+
+                // 加载 不计入客诉下拉列表
+                $("#revokeresult_select").empty();
+                var result_list = result.extend.result_list;
+                $("<option></option>").append("").appendTo("#revokeresult_select");
+                $.each(result_list, function (index, item) {
+                    var resultOption = $("<option></option>").append(item.item_value)
+                        .attr("value", item.item_key)
+                    resultOption.appendTo("#revokeresult_select");
+                });
+
+
+                // 建立下拉框后赋值 保证信息一致性
                 $("#leasts_update_static").text(complaint.leasts);
                 $("#customcode_update_static").val(complaint.customcode);
                 $("#model_update_static").val(complaint.model);
@@ -405,12 +407,10 @@
                 $("#revokeresult_select").val(complaint.revokeresult);
                 $("#defedtdesc_update_input").val(complaint.defedtdesc);
 
-                console.log(complaint);
                 // 获取该car号对应的 责任工序下拉框选项,加载到相应位置
                 blameSelectOptions = result.extend.blameSelectOptions;
                 outBlameSelectOptions = result.extend.blameSelectOptions;
 
-                console.log(blameSelectOptions);
                 $.each(blameSelectOptions, function (index, item) {
                     var blameOption = $("<option></option>").append(item.operation_description)
                         .attr("value", item.operation_description)
@@ -632,8 +632,7 @@
             blameProcess.standard_operation_code = standard_operation_code;
             blameList.push(blameProcess);
         }
-        console.log("blameList");
-        console.log(blameList);
+
 
         var outBlameTrList = $("#outBlameProcesses_table tbody").children("tr");
         var outBlameList = new Array();
@@ -651,8 +650,7 @@
             outBlameList.push(blameProcess);
         }
 
-        console.log("outBlameList");
-        console.log(outBlameList);
+
 
 
        console.log(JSON.stringify({

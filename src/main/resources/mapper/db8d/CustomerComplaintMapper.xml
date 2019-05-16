@@ -29,6 +29,11 @@
         <result property="blame_type" column="blame_type"/>
     </resultMap>
 
+    <resultMap id="GenerateSelectList" type="java.util.Map">
+        <result property="item_key" column="item_key"/>
+        <result property="item_value" column="item_value"/>
+    </resultMap>
+
     <select id="getComplaintsByCar" resultType="com.suntak.eightdisciplines.entity.CustomerComplaint">
         SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,s.status
 		FROM spfs30_8d_sell t
@@ -80,5 +85,16 @@
         WHERE  base_uid = #{base_uid}
     </update>
 
+    <select id="generateClaimtypeList" resultMap="GenerateSelectList">
+       SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
+       FROM SC.CODES S
+       WHERE  APP_NAME='SPFS' AND CODE_TYPE='TYPES_ID'
+    </select>
 
+    <select id="generateRevokeresultList" resultMap="GenerateSelectList">
+       SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
+       FROM SC.CODES S
+       WHERE  APP_NAME='SPFS' AND CODE_TYPE='REVOKERESULT_ID'
+       order by code_desc_eng
+    </select>
 </mapper>

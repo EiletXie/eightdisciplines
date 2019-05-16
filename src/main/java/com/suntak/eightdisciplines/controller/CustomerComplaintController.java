@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 //注入的时候一定要是Controller 不要是RestController 因为它是rest接口（json格式） 是解析不到html
@@ -122,10 +123,14 @@ public class CustomerComplaintController {
         }
         List<BlameProcess> blameSelectOptions = commonUtilsService.getBlameSelectOptions(c.getMfg_org_id(),c.getInventory_item_id());
 
-        System.out.println("---------------------------------->");
-        System.out.println(c);
-        return Msg.success().add("complaint", c).add("blameSelectOptions",blameSelectOptions);
+
+        HashMap<String,Object> map = customerComplaintService.generateSelectList();
+
+        return Msg.success().add("complaint", c).add("blameSelectOptions",blameSelectOptions)
+                .add("type_list",map.get("type_list")).add("result_list",map.get("result_list"));
     }
+
+
 
 
     @ResponseBody

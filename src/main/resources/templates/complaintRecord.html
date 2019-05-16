@@ -180,6 +180,7 @@
                         <input  type="text"  id="record_leasts">
                     </div>
                     <button type="button" class="btn btn-default" id="record_find_btn">查询</button>
+                    <button type="button" class="btn btn-success" id="exportBtn">导出</button>
                 </form>
             </div>
         </div>
@@ -423,9 +424,20 @@
         });
     });
 
-         $("#loginBtn").click(function(){
-             window.location.href = contextPath;
-         });
+     // 导出客诉修改EXCEL
+    $("#exportBtn").click(function(){
+        var start_day = $("#startdate").val();
+        var end_day = $("#enddate").val();
+
+        window.location.href = contextPath +"record/export?startdate="+start_day + "&enddate="+ end_day;
+    });
+
+
+     $("#loginBtn").click(function(){
+         window.location.href = contextPath;
+     });
+
+
 </script>
 
 </body>

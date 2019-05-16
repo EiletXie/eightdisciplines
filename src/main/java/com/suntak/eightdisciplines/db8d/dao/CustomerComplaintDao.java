@@ -4,7 +4,9 @@ import com.suntak.eightdisciplines.entity.CustomerComplaint;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Qualifier("db8dSqlSessionTemplate")
 public interface CustomerComplaintDao {
@@ -45,4 +47,18 @@ public interface CustomerComplaintDao {
      * @return
      */
     String getMeaningByCode(@Param("code") String code,@Param("code_type") String code_type);
+
+
+    /**
+     * 获取不计入客诉理由下拉列表
+     * @return
+     */
+    List<Map<Object,Object>> generateRevokeresultList();
+
+
+    /**
+     * 获取投诉类别下拉列表
+     * @return
+     */
+    List<Map<Object,Object>> generateClaimtypeList();
 }

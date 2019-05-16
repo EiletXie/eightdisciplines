@@ -97,6 +97,32 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.54</version>
         </dependency>
+
+
+        <!-- 集成easypoi组件 .导出excel http://easypoi.mydoc.io/ -->
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-base</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-web</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-annotation</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+
+        <!--  Excel 导出插件 但 与 springboot 2.1 版本冲突 -->
+      <!--  <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-spring-boot-starter</artifactId>
+            <version>3.2.0</version>
+        </dependency>-->
     </dependencies>
 
     <build>
