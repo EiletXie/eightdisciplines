@@ -6,6 +6,7 @@ import com.suntak.eightdisciplines.db8d.service.CustomerComplaintService;
 import com.suntak.eightdisciplines.entity.BlameProcess;
 import com.suntak.eightdisciplines.entity.CustomerComplaint;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
     }
 
     @Override
-    public String getComplaintChangeContent(CustomerComplaint complaint) {
+    public String getComplaintChangeContent(CustomerComplaint complaint, List<MultipartFile> files) {
 
         String base_uid = complaint.getBase_uid();
         //1、 获取未修改前的客诉记录
@@ -136,6 +137,13 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
             content += "将责任流出工序： 由 " + oldOutBlameList + " 改为 " + nowOutBlameList + " ";
         }
 
+
+        if(!files.isEmpty()){
+            content += "添加附件 : ";
+            for(MultipartFile file : files){
+                content += file.getOriginalFilename() + " ";
+            }
+        }
         return content;
     }
 }

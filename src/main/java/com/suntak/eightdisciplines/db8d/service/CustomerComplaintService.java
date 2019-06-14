@@ -1,6 +1,7 @@
 package com.suntak.eightdisciplines.db8d.service;
 
 import com.suntak.eightdisciplines.entity.CustomerComplaint;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface CustomerComplaintService {
      * @param complaint
      * @return 内容前后变更情况
      */
-    String getComplaintChangeContent(CustomerComplaint complaint);
+    String getComplaintChangeContent(CustomerComplaint complaint, List<MultipartFile> files);
 
 
     /**

@@ -90,7 +90,7 @@
             </div>
             <div class="modal-body">
 
-                <form class="form-horizontal" id="complaintForm">
+                <form class="form-horizontal" id="complaintForm"  enctype="multipart/form-data">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">CAR</label>
                         <div class="col-sm-10">
@@ -100,14 +100,14 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">生产型号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="model" id="model_update_static" readonly>
+                            <input type="text" class="form-control" name="model" id="model_update_static" readonly />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">客户编码</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" name="customcode" id="customcode_update_static"
-                                   readonly>
+                                   readonly />
                         </div>
                     </div>
                     <div class="form-group">
@@ -131,15 +131,13 @@
                         <label class="col-sm-2 control-label">不计入理由</label>
                         <div class="col-sm-10">
                             <select class="form-control" name="revokeresult" id="revokeresult_select">
-                                <option value=""></option>
-
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">缺陷描述</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="defedtdesc" id="defedtdesc_update_input">
+                            <input type="text" class="form-control" name="defedtdesc" id="defedtdesc_update_input" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -201,7 +199,27 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">上传附件</label>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-success btn-sm" id="file_add_btn">新增</button>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table table-hover table-bordered" id="files_table">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>文件名</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">修改原因</label>
+
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="reason_update_input">
                             <span class="help-block" id="update_reason_help"></span>
@@ -357,6 +375,8 @@
 
     // 记录责任工序的选项，当新增时取出选项进行同步操作
     var blameSelectOptions, outBlameSelectOptions;
+
+
 
 
     $(document).on("click", ".complaint-edit", function () {
@@ -650,16 +670,26 @@
             outBlameList.push(blameProcess);
         }
 
+        // 为了 将表单中文件数据进行传送，将json数据封装填入表单
+        var complaint = JSON.stringify( {
+                "complaint": $("#complaintForm").serializeArray(),
+                "reason": $("#reason_update_input").val(),
+                "blameList": blameList,
+                "outBlameList": outBlameList,
+                "base_uid" :  $(this).attr("edit-id")
+            });
+
+        // 将数据封装成一个 FormData对象，注意 append 只能存储 string， blob，file
+       var complaintFormData = new FormData();
+        complaintFormData.append("complaint",complaint);
+
+        $("input[name='complaint_file']").each(function () {
+            console.log(this.files);
+            complaintFormData.append("complaint_file",this.files[0]);
+        });
 
 
-
-       console.log(JSON.stringify({
-           "complaint": $("#complaintForm").serializeArray(),
-           "reason": $("#reason_update_input").val(),
-           "blameList": blameList,
-           "outBlameList": outBlameList,
-           "base_uid" :  $(this).attr("edit-id")
-       }));
+        console.log(complaintFormData);
         // 客诉对象数据
         $.ajax({
             url: contextPath + "/complaint/editComplaint",
@@ -667,17 +697,14 @@
             dataType:"json",
             contentType:"application/json",
             cache:false,
-            data:JSON.stringify( {
-                "complaint": $("#complaintForm").serializeArray(),
-                "reason": $("#reason_update_input").val(),
-                "blameList": blameList,
-                "outBlameList": outBlameList,
-                "base_uid" :  $(this).attr("edit-id")
-            }),
+            data:complaintFormData,
+            processData: false,
+            contentType: false,
             success: function (result) {
                 alert("更新成功！");
                 window.location.reload();
             }
+
         });
     });
 
@@ -704,6 +731,28 @@
                 }
             }
         });
+    });
+
+
+    // 附件新增
+    $("#file_add_btn").click(function(){
+
+        var fileTd = $("<td class=\"text-center\"></td>").append("<input type= 'file'  name='complaint_file' />");
+        var delBtn = $("<button></button>").addClass("btn  btn-danger btn-sm file_del_btn").append("删除");
+
+        var btnTd = $("<td></td>").append(delBtn);
+        $("<tr></tr>").append(fileTd)
+            .append(btnTd)
+            .appendTo("#files_table tbody");
+    });
+
+
+
+
+    // 同步 file附件的数据
+    $(document).on("click", ".file_del_btn", function () {
+        $(this).parent().parent().remove();
+        return false;
     });
 
     $("#loginBtn").click(function () {

@@ -2,6 +2,7 @@ package com.suntak.eightdisciplines.db8d.service.impl;
 
 import com.suntak.eightdisciplines.db8d.dao.RecordDao;
 import com.suntak.eightdisciplines.db8d.service.RecordService;
+import com.suntak.eightdisciplines.entity.AttachFile;
 import com.suntak.eightdisciplines.entity.Record;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,8 @@ public class RecordServiceImpl implements RecordService {
     RecordDao recordDao;
 
     @Override
-    public void addRecord(Record record) {
-        recordDao.addRecord(record);
+    public int addRecord(Record record) {
+        return recordDao.addRecord(record);
     }
 
     @Override
@@ -28,5 +29,10 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public Record getRecordByRid(String rid) {
         return recordDao.getRecordByRid(rid);
+    }
+
+    @Override
+    public void addAttachFile(AttachFile attachFile) {
+        recordDao.addAttachFile(attachFile);
     }
 }

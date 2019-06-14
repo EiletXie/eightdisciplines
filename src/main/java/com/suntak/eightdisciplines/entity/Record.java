@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.util.Date;
+import java.util.List;
 
 @EntityScan
 public class Record {
@@ -25,6 +26,16 @@ public class Record {
     private String content;
     @Excel(name = "修改理由", width = 50)
     private String reason;
+
+    private List<AttachFile> attachFiles;
+
+    public List<AttachFile> getAttachFiles() {
+        return attachFiles;
+    }
+
+    public void setAttachFiles(List<AttachFile> attachFiles) {
+        this.attachFiles = attachFiles;
+    }
 
     public String getRid() {
         return rid;
@@ -95,12 +106,13 @@ public class Record {
         return "Record{" +
                 "rid='" + rid + '\'' +
                 ", modify_username='" + modify_username + '\'' +
-                ", empId='" + emp_id + '\'' +
-                ", create_date='" + create_date + '\'' +
+                ", emp_id='" + emp_id + '\'' +
+                ", create_date=" + create_date +
                 ", leasts='" + leasts + '\'' +
-                ", customerCode='" + customercode + '\'' +
+                ", customercode='" + customercode + '\'' +
                 ", content='" + content + '\'' +
                 ", reason='" + reason + '\'' +
+                ", attachFiles=" + attachFiles +
                 '}';
     }
 }

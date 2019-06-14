@@ -6,17 +6,23 @@ import com.suntak.eightdisciplines.dbErp.service.CommonUtilsService;
 import com.suntak.eightdisciplines.entity.*;
 import com.suntak.eightdisciplines.db8d.service.CustomerComplaintService;
 import com.suntak.eightdisciplines.db8d.service.RecordService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 //注入的时候一定要是Controller 不要是RestController 因为它是rest接口（json格式） 是解析不到html
 @Controller
@@ -32,11 +38,16 @@ public class CustomerComplaintController {
     @Resource
     private CommonUtilsService commonUtilsService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomerComplaintController.class);
 
     @PostMapping("/complaintInfo")
     public String getComplaintsByCar(@RequestParam("leasts") String leasts, ModelMap map) {
         List<CustomerComplaint> list = customerComplaintService.getComplaintsByCar(leasts);
+
+        logger.info("通过Car号" + leasts + "获取客诉信息");
         for (CustomerComplaint c : list) {
+
+            logger.info("查询的客诉 ->" + c);
             if (!"".equals(c.getCustomprocess())) {
                 String customprocess = customerComplaintService.getMeaningByCode(c.getCustomprocess(), "CLAIM_ID");
                 c.setCustomprocess(customprocess);
@@ -68,9 +79,11 @@ public class CustomerComplaintController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/editComplaint")
-    public Msg editComplaint(@RequestBody JSONObject jsonObject, HttpSession session) throws Exception{
-         User user = (User) session.getAttribute("user");
+    @PostMapping("/editComplaint") //@RequestBody JSONObject jsonObject
+    @Transactional
+    public Msg editComplaint(HttpSession session, HttpServletRequest request, @RequestParam(value = "complaint_file", required = true) List<MultipartFile> files) throws Exception {
+        User user = (User) session.getAttribute("user");
+        JSONObject jsonObject = JSONObject.parseObject(request.getParameter("complaint"));
         String reason = jsonObject.getString("reason");
         JSONArray complaint = jsonObject.getJSONArray("complaint");
 
@@ -100,14 +113,55 @@ public class CustomerComplaintController {
             record.setCustomercode(oldComplaint.getCustomcode());
             record.setLeasts(oldComplaint.getLeasts());
             // 将变更内容进行封装
-            String content = customerComplaintService.getComplaintChangeContent(nowComplaint);
+            String content = customerComplaintService.getComplaintChangeContent(nowComplaint,files);
             record.setContent(content);
             record.setCreate_date(new Date());
             System.out.println(complaint);
-            System.out.println(record);
-            recordService.addRecord(record);
+            logger.info("修改客诉 ：原内容 " + complaint);
+            int rid = recordService.addRecord(record);
             customerComplaintService.updateComplaint(nowComplaint);
-            return Msg.success();
+
+            for (MultipartFile file : files) {
+                if (file.isEmpty()) {
+                    logger.info("未上传文件");
+                } else {
+                    AttachFile attachFile = new AttachFile();
+                    String fileName = file.getOriginalFilename();
+                    logger.info("上传的文件 ： " + fileName);
+                    attachFile.setFilename(fileName);
+                    attachFile.setFilesize(file.getSize() + "");
+                    attachFile.setCreate_date(new Date());
+                    attachFile.setRid(record.getRid());
+
+                    String suffixName = fileName.substring(fileName.lastIndexOf("."));
+                    logger.info("上传的后缀名为：" + suffixName);
+
+                    // 文件上传后的路径 E://test// window测试目录,下面是实际linux附件存放目录
+                    String filePath = "//usr//local//attachfiles-8d//";
+                    // 上传Linux服务器，要求不能出现中文路径
+                    fileName = UUID.randomUUID() + suffixName;
+                    attachFile.setFilepath(filePath+fileName);
+                    File dest = new File(filePath + fileName);
+                    // 检测是否存在目录
+                    if (!dest.getParentFile().exists()) {
+                        dest.getParentFile().mkdirs();
+                    }
+
+                    try {
+                        file.transferTo(dest);
+                        System.out.println(attachFile);
+                        recordService.addAttachFile(attachFile);
+
+                        Msg.success();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            return Msg.fail();
         } else
             return Msg.fail().add("message", "登录超时，用户信息失效，请重新登录！");
     }
@@ -121,16 +175,14 @@ public class CustomerComplaintController {
         if (base_uid != null) {
             c = customerComplaintService.getComplaintByBaseUid(base_uid);
         }
-        List<BlameProcess> blameSelectOptions = commonUtilsService.getBlameSelectOptions(c.getMfg_org_id(),c.getInventory_item_id());
+        List<BlameProcess> blameSelectOptions = commonUtilsService.getBlameSelectOptions(c.getMfg_org_id(), c.getInventory_item_id());
 
 
-        HashMap<String,Object> map = customerComplaintService.generateSelectList();
+        HashMap<String, Object> map = customerComplaintService.generateSelectList();
 
-        return Msg.success().add("complaint", c).add("blameSelectOptions",blameSelectOptions)
-                .add("type_list",map.get("type_list")).add("result_list",map.get("result_list"));
+        return Msg.success().add("complaint", c).add("blameSelectOptions", blameSelectOptions)
+                .add("type_list", map.get("type_list")).add("result_list", map.get("result_list"));
     }
-
-
 
 
     @ResponseBody
@@ -162,6 +214,7 @@ public class CustomerComplaintController {
     }
 
 
+
     @GetMapping("/complaintChange")
     public String toComplaint(ModelMap map) {
         List<CustomerComplaint> list = new ArrayList<>();
@@ -169,7 +222,6 @@ public class CustomerComplaintController {
         map.addAttribute("customerComplaint", new CustomerComplaint());
         return "complaintChange";
     }
-
 
 
 }

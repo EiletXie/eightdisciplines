@@ -134,6 +134,23 @@
                             <p class="form-control-static" id="createdate_update_static"></p>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-4   control-label">附件(限制20M)</label>
+                        <div class="col-md-9 col-sm-offset-1">
+                            <table class="table table-hover table-bordered" id="attachFiles_table">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>序号</th>
+                                    <th>文件名</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -409,6 +426,7 @@
             dataType:"json",
             success:function(result){
                 var record = result.extend.record;
+                console.log(record);
                 $("#recordUpdateModal").modal({
                     backdrop:"static"
                 });
@@ -420,9 +438,48 @@
                 $("#createdate_update_static").text(record.create_date);
                 $("#username_update_static").text(record.modify_username);
                 $("#empid_update_static").text(record.emp_id);
+
+                // 清除已加载的 文件下载数据
+                $("#attachFiles_table tbody").empty();
+
+                $.each(record.attachFiles,function(index,item){
+                    var  indexTd = $("<td class='text-center'></td>").append(index +1);
+                    var filenameTd = $("<td class='text-center'></td>").append(item.filename);
+                    var loadBtn = $("<button></button>").addClass("btn btn-success btn-sm attachFile_download_btn").append("下载");
+                    loadBtn.attr("filepath",item.filepath);
+                    loadBtn.attr("filename",item.filename);
+                    var btnTd = $("<td class='text-center'></td>").append(loadBtn);
+                    $("<tr></tr>")
+                        .append(indexTd)
+                        .append(filenameTd)
+                        .append(btnTd)
+                        .appendTo("#attachFiles_table tbody");
+                })
             }
         });
     });
+
+
+    // 下载附件
+    $(document).on("click", ".attachFile_download_btn", function () {
+
+        var filepath = $(this).attr("filepath");
+        var  filename = $(this).attr("filename");
+       var path =  contextPath +"record/download?filename="+filename + "&filepath="+ filepath;
+       console.log(path);
+        window.location.href = path;
+        // 这句话确保了 跳转，但是又两个问题就出来了
+        // 1、 为什么模态框中的跳转无效
+        // 2、 为什么这句话又让它有效了
+        window.event.returnValue=false;
+
+        $("#recordUpdateModal").modal({
+            backdrop:"static"
+        });
+
+
+    });
+
 
      // 导出客诉修改EXCEL
     $("#exportBtn").click(function(){
