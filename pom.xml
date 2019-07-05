@@ -26,7 +26,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -79,13 +78,11 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
 
         <dependency>
@@ -114,18 +111,18 @@
 
 
         <!--  Excel 导出插件 但 与 springboot 2.1 版本冲突 -->
-      <!--  <dependency>
-            <groupId>cn.afterturn</groupId>
-            <artifactId>easypoi-spring-boot-starter</artifactId>
-            <version>3.2.0</version>
-        </dependency>-->
+        <!--  <dependency>
+              <groupId>cn.afterturn</groupId>
+              <artifactId>easypoi-spring-boot-starter</artifactId>
+              <version>3.2.0</version>
+          </dependency>-->
 
-           <!-- 热部署 -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-devtools</artifactId>
-                <optional>true</optional>
-            </dependency>
+        <!-- 热部署 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

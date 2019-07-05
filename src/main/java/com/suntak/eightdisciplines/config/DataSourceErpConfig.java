@@ -16,7 +16,6 @@ import javax.sql.DataSource;
 
 /**
  * Erp数据源配置类
- *
  */
 @Configuration
 @MapperScan(basePackages = "com.suntak.eightdisciplines.dbErp.dao", sqlSessionTemplateRef = "dbErpSqlSessionTemplate")
@@ -52,6 +51,7 @@ public class DataSourceErpConfig {
 
     /**
      * 配置事务管理
+     *
      * @param dataSource
      * @return
      */
@@ -61,7 +61,7 @@ public class DataSourceErpConfig {
     }
 
     @Bean(name = "dbErpSqlSessionTemplate")
-    public SqlSessionTemplate dbErpSqlSessionTemplate(@Qualifier("dbErpSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws  Exception {
+    public SqlSessionTemplate dbErpSqlSessionTemplate(@Qualifier("dbErpSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }

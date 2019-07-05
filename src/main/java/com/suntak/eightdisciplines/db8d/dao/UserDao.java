@@ -8,6 +8,7 @@ public interface UserDao {
 
     /**
      * 用户登录
+     *
      * @param user
      * @return
      */
@@ -15,6 +16,7 @@ public interface UserDao {
 
     /**
      * 根据用户名获取用户信息
+     *
      * @param username
      * @return
      */

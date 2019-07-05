@@ -26,34 +26,34 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
     BlameProcessDao blameProcessDao;
 
     @Override
-    public List<CustomerComplaint> getComplaintsByCar(String leasts){
+    public List<CustomerComplaint> getComplaintsByCar(String leasts) {
         return customerComplaintDao.getComplaintsByCar(leasts);
     }
 
     @Override
     public void deleteComplaint(String base_uid) {
-         customerComplaintDao.deleteComplaint(base_uid);
+        customerComplaintDao.deleteComplaint(base_uid);
     }
 
     @Override
     public void updateComplaint(CustomerComplaint customerComplaint) {
-         customerComplaintDao.updateComplaint(customerComplaint);
-         // 先删除 责任工序的所有数据
-         blameProcessDao.deleteBlamesByBaseUid(customerComplaint.getBase_uid());
-         // 插入 责任产生工序和流出工序
-        for ( BlameProcess blame : customerComplaint.getBlameProcesses()) {
+        customerComplaintDao.updateComplaint(customerComplaint);
+        // 先删除 责任工序的所有数据
+        blameProcessDao.deleteBlamesByBaseUid(customerComplaint.getBase_uid());
+        // 插入 责任产生工序和流出工序
+        for (BlameProcess blame : customerComplaint.getBlameProcesses()) {
             blame.setBase_uid(customerComplaint.getBase_uid());
             blameProcessDao.addBlameProcess(blame);
         }
-        for ( BlameProcess blame : customerComplaint.getOutBlameProcesses()) {
+        for (BlameProcess blame : customerComplaint.getOutBlameProcesses()) {
             blame.setBase_uid(customerComplaint.getBase_uid());
             blameProcessDao.addBlameProcess(blame);
         }
     }
 
     @Override
-    public String getMeaningByCode(String code,String code_type) {
-        return customerComplaintDao.getMeaningByCode(code,code_type);
+    public String getMeaningByCode(String code, String code_type) {
+        return customerComplaintDao.getMeaningByCode(code, code_type);
     }
 
     @Override
@@ -62,12 +62,12 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
     }
 
     @Override
-    public  HashMap<String,Object> generateSelectList() {
-        List<Map<Object, Object>> type_list =  customerComplaintDao.generateClaimtypeList();
-        List<Map<Object, Object>> result_list =  customerComplaintDao.generateRevokeresultList();
-        HashMap<String,Object> map = new HashMap<>();
-        map.put("type_list",type_list);
-        map.put("result_list",result_list);
+    public HashMap<String, Object> generateSelectList() {
+        List<Map<Object, Object>> type_list = customerComplaintDao.generateClaimtypeList();
+        List<Map<Object, Object>> result_list = customerComplaintDao.generateRevokeresultList();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type_list", type_list);
+        map.put("result_list", result_list);
         return map;
     }
 
@@ -95,10 +95,9 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
             oldRevokeresult = customerComplaintDao.getMeaningByCode(oldComplaint.getRevokeresult(), "REVOKERESULT_ID");
             String Revokeresult = customerComplaintDao.getMeaningByCode(complaint.getRevokeresult(), "REVOKERESULT_ID");
             if (oldComplaint.getRevokeresult() == "" || oldComplaint.getRevokeresult() == null) {
-                if(Revokeresult != null && !Revokeresult.equals(""))
-                content += "将不计入客诉理由： 由 空 改为 " + Revokeresult + "  ";
-            }
-            else
+                if (Revokeresult != null && !Revokeresult.equals(""))
+                    content += "将不计入客诉理由： 由 空 改为 " + Revokeresult + "  ";
+            } else
                 content += "将不计入客诉理由： 由 " + oldRevokeresult + "  改为 " + Revokeresult + "  ";
         }
 
@@ -114,33 +113,33 @@ public class CustomerComplaintServiceImpl implements CustomerComplaintService {
         }
 
         String nowBlameList = "";
-        for(BlameProcess blame : complaint.getBlameProcesses()){
+        for (BlameProcess blame : complaint.getBlameProcesses()) {
             nowBlameList += blame.getOperation_description() + " ";
         }
         String oldBlameList = "";
-        for(BlameProcess blame : oldComplaint.getBlameProcesses()){
+        for (BlameProcess blame : oldComplaint.getBlameProcesses()) {
             oldBlameList += blame.getOperation_description() + " ";
         }
-        if(!nowBlameList.equals(oldBlameList)){
+        if (!nowBlameList.equals(oldBlameList)) {
             content += "将责任产出工序： 由 " + oldBlameList + " 改为 " + nowBlameList + " ";
         }
 
         String nowOutBlameList = "";
-        for(BlameProcess blame : complaint.getOutBlameProcesses()){
+        for (BlameProcess blame : complaint.getOutBlameProcesses()) {
             nowOutBlameList += blame.getOperation_description() + " ";
         }
         String oldOutBlameList = "";
-        for(BlameProcess blame : oldComplaint.getOutBlameProcesses()){
+        for (BlameProcess blame : oldComplaint.getOutBlameProcesses()) {
             oldOutBlameList += blame.getOperation_description() + " ";
         }
-        if(!nowOutBlameList.equals(oldOutBlameList)){
+        if (!nowOutBlameList.equals(oldOutBlameList)) {
             content += "将责任流出工序： 由 " + oldOutBlameList + " 改为 " + nowOutBlameList + " ";
         }
 
 
-        if(!files.isEmpty()){
+        if (!files.isEmpty()) {
             content += "添加附件 : ";
-            for(MultipartFile file : files){
+            for (MultipartFile file : files) {
                 content += file.getOriginalFilename() + " ";
             }
         }

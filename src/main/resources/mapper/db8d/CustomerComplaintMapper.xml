@@ -36,20 +36,21 @@
 
     <select id="getComplaintsByCar" resultType="com.suntak.eightdisciplines.entity.CustomerComplaint">
         SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,s.status
-		FROM spfs30_8d_sell t
-		LEFT JOIN base_form s
-		ON t.base_uid = s.base_uid
-		WHERE t.leasts = #{leasts}
-	</select>
+        FROM spfs30_8d_sell t
+        LEFT JOIN base_form s
+        ON t.base_uid = s.base_uid
+        WHERE t.leasts = #{leasts}
+        AND s.status != 'V'
+    </select>
 
     <select id="getComplaintByBaseUid" resultMap="CustomerComplaint">
-		SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,
-		       t.mfg_org_id,t.inventory_item_id, t.model,s.status
-		FROM spfs30_8d_sell t
-		LEFT JOIN base_form s
-		ON t.base_uid = s.base_uid
-		WHERE t.base_uid = #{base_uid}
-	</select>
+        SELECT t.base_uid,t.customcode,t.customprocess,t.revokeresult,t.leasts,t.defedtdesc,t.claimtypes,
+        t.mfg_org_id,t.inventory_item_id, t.model,s.status
+        FROM spfs30_8d_sell t
+        LEFT JOIN base_form s
+        ON t.base_uid = s.base_uid
+        WHERE t.base_uid = #{base_uid}
+    </select>
 
     <select id="selectBlamesForComplaint" resultMap="BlameProcess">
         SELECT t.base_uid,t.standard_operation_code,t.operation_description,t.blame_content,t.blame_type
@@ -64,9 +65,9 @@
     </select>
 
     <select id="getMeaningByCode" resultType="String">
-		SELECT t.code_desc FROM sc.codes t
-		WHERE t.code = #{code,jdbcType=VARCHAR} AND t.code_type = #{code_type}  AND ROWNUM = 1
-	</select>
+        SELECT t.code_desc FROM sc.codes t
+        WHERE t.code = #{code,jdbcType=VARCHAR} AND t.code_type = #{code_type} AND ROWNUM = 1
+    </select>
 
     <update id="updateComplaint">
         UPDATE spfs30_8d_sell
@@ -75,26 +76,27 @@
         <if test="claimtypes != null">claimtypes=#{claimtypes},</if>
         <if test="customprocess != null">customprocess=#{customprocess},</if>
         <if test="revokeresult != null">revokeresult=#{revokeresult},</if>
-        <if test="model != null">model=#{model}</if>
+        <if test="model != null">model=#{model},</if>
+        DATE_UPDATE = SYSDATE
         WHERE base_uid = #{base_uid}
     </update>
 
     <update id="deleteComplaint">
         UPDATE base_form
-          SET  status= 'T'
-        WHERE  base_uid = #{base_uid}
+        SET status= 'T',DATE_UPDATE = SYSDATE
+        WHERE base_uid = #{base_uid}
     </update>
 
     <select id="generateClaimtypeList" resultMap="GenerateSelectList">
-       SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
-       FROM SC.CODES S
-       WHERE  APP_NAME='SPFS' AND CODE_TYPE='TYPES_ID'
+        SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
+        FROM SC.CODES S
+        WHERE APP_NAME='SPFS' AND CODE_TYPE='TYPES_ID' AND S.CODE NOT IN ( '5045','5049','5044')
     </select>
 
     <select id="generateRevokeresultList" resultMap="GenerateSelectList">
-       SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
-       FROM SC.CODES S
-       WHERE  APP_NAME='SPFS' AND CODE_TYPE='REVOKERESULT_ID'
-       order by code_desc_eng
+        SELECT S.CODE AS ITEM_KEY , S.CODE_DESC AS ITEM_VALUE
+        FROM SC.CODES S
+        WHERE APP_NAME='SPFS' AND CODE_TYPE='REVOKERESULT_ID'
+        order by code_desc_eng
     </select>
 </mapper>

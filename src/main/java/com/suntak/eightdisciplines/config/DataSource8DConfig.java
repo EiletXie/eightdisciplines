@@ -26,6 +26,7 @@ public class DataSource8DConfig {
 
     /**
      * 生成数据源， @Primary 注解声明为默认数据源
+     *
      * @return
      */
     @Bean(name = "db8dDataSource")
@@ -40,6 +41,7 @@ public class DataSource8DConfig {
      * SqlSessionTemplate是MyBatis-Spring的核心。
      * 这个类负责管理MyBatis的SqlSession,调用MyBatis的SQL方法，翻译异常。
      * SqlSessionTemplate是线程安全的，可以被多个DAO所共享使用
+     *
      * @param dataSource
      * @return
      * @throws Exception
@@ -55,6 +57,7 @@ public class DataSource8DConfig {
 
     /**
      * 配置事务管理
+     *
      * @param dataSource
      * @return
      */
@@ -66,7 +69,7 @@ public class DataSource8DConfig {
 
     @Bean(name = "db8dSqlSessionTemplate")
     @Primary
-    public SqlSessionTemplate db8dSqlSessionTemplate(@Qualifier("db8dSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws  Exception {
+    public SqlSessionTemplate db8dSqlSessionTemplate(@Qualifier("db8dSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 

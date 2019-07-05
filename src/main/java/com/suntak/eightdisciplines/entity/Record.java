@@ -16,7 +16,7 @@ public class Record {
     private String modify_username;
     @Excel(name = "工号", width = 20)
     private String emp_id;
-    @Excel(name = "日期", width = 25,exportFormat = "yyyy-MM-dd HH:mm")
+    @Excel(name = "日期", width = 25, exportFormat = "yyyy-MM-dd HH:mm")
     private Date create_date;
     @Excel(name = "CAR号", width = 30)
     private String leasts;

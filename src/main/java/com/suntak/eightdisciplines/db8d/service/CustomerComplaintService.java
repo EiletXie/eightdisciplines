@@ -12,6 +12,7 @@ public interface CustomerComplaintService {
 
     /**
      * 通过CAR号获取相应的客诉组
+     *
      * @param leasts
      * @return
      */
@@ -19,6 +20,7 @@ public interface CustomerComplaintService {
 
     /**
      * 通过id获取客诉信息
+     *
      * @param base_uid
      * @return
      */
@@ -26,18 +28,21 @@ public interface CustomerComplaintService {
 
     /**
      * 删除客诉，更新BASE_FORM状态为‘T’
+     *
      * @param base_uid
      */
     void deleteComplaint(String base_uid);
 
     /**
      * 更新客诉
+     *
      * @param customerComplaint
      */
     void updateComplaint(CustomerComplaint customerComplaint);
 
     /**
      * 传入字符编码，获取具体含义解释
+     *
      * @param code
      * @param code_type
      * @return
@@ -46,6 +51,7 @@ public interface CustomerComplaintService {
 
     /**
      * 传入新修改的客诉对象，与数据库的未修改客诉对象进行比对
+     *
      * @param complaint
      * @return 内容前后变更情况
      */
@@ -54,7 +60,8 @@ public interface CustomerComplaintService {
 
     /**
      * 初始化下拉列表
+     *
      * @return
      */
-    HashMap<String,Object> generateSelectList();
+    HashMap<String, Object> generateSelectList();
 }

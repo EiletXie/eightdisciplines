@@ -90,7 +90,7 @@
             </div>
             <div class="modal-body">
 
-                <form class="form-horizontal" id="complaintForm"  enctype="multipart/form-data">
+                <form class="form-horizontal" id="complaintForm" enctype="multipart/form-data">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">CAR</label>
                         <div class="col-sm-10">
@@ -100,14 +100,14 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">生产型号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="model" id="model_update_static" readonly />
+                            <input type="text" class="form-control" name="model" id="model_update_static" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">客户编码</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" name="customcode" id="customcode_update_static"
-                                   readonly />
+                                   readonly/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -137,7 +137,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">缺陷描述</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="defedtdesc" id="defedtdesc_update_input" />
+                            <input type="text" class="form-control" name="defedtdesc" id="defedtdesc_update_input"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -345,7 +345,7 @@
                         <th th:text="${c.revokeresult}">不计入理由</th>
                         <th th:text="${c.claimtypes}">投诉类别</th>
                         <th th:text="${c.defedtdesc}">缺陷描述</th>
-                        <th th:text="${c.status == 'T' ? '已删除' : '在流程中'}">状态</th>
+                        <th th:text="${c.status}">状态</th>
                         <th>
                             <button th:value="${c.base_uid}" class="btn btn-primary btn-sm complaint-edit">编辑</button>
                             <button th:value="${c.base_uid}" class="btn btn-danger btn-sm  complaint-del">删除</button>
@@ -377,8 +377,6 @@
     var blameSelectOptions, outBlameSelectOptions;
 
 
-
-
     $(document).on("click", ".complaint-edit", function () {
         var base_uid = $(this).val();
         $.ajax({
@@ -393,8 +391,6 @@
                 });
                 //给更新的按钮赋值一个base_uid的属性
                 $("#complaint_update_btn").attr("edit-id", complaint.base_uid);
-
-
 
 
                 // 加载 投诉类别 下拉列表
@@ -490,7 +486,6 @@
             }
         });
     });
-
 
 
     // 同步 责任产生工序的数据
@@ -671,21 +666,21 @@
         }
 
         // 为了 将表单中文件数据进行传送，将json数据封装填入表单
-        var complaint = JSON.stringify( {
-                "complaint": $("#complaintForm").serializeArray(),
-                "reason": $("#reason_update_input").val(),
-                "blameList": blameList,
-                "outBlameList": outBlameList,
-                "base_uid" :  $(this).attr("edit-id")
-            });
+        var complaint = JSON.stringify({
+            "complaint": $("#complaintForm").serializeArray(),
+            "reason": $("#reason_update_input").val(),
+            "blameList": blameList,
+            "outBlameList": outBlameList,
+            "base_uid": $(this).attr("edit-id")
+        });
 
         // 将数据封装成一个 FormData对象，注意 append 只能存储 string， blob，file
-       var complaintFormData = new FormData();
-        complaintFormData.append("complaint",complaint);
+        var complaintFormData = new FormData();
+        complaintFormData.append("complaint", complaint);
 
         $("input[name='complaint_file']").each(function () {
             console.log(this.files);
-            complaintFormData.append("complaint_file",this.files[0]);
+            complaintFormData.append("complaint_file", this.files[0]);
         });
 
 
@@ -694,10 +689,10 @@
         $.ajax({
             url: contextPath + "/complaint/editComplaint",
             type: "POST",
-            dataType:"json",
-            contentType:"application/json",
-            cache:false,
-            data:complaintFormData,
+            dataType: "json",
+            contentType: "application/json",
+            cache: false,
+            data: complaintFormData,
             processData: false,
             contentType: false,
             success: function (result) {
@@ -735,7 +730,7 @@
 
 
     // 附件新增
-    $("#file_add_btn").click(function(){
+    $("#file_add_btn").click(function () {
 
         var fileTd = $("<td class=\"text-center\"></td>").append("<input type= 'file'  name='complaint_file' />");
         var delBtn = $("<button></button>").addClass("btn  btn-danger btn-sm file_del_btn").append("删除");
@@ -745,8 +740,6 @@
             .append(btnTd)
             .appendTo("#files_table tbody");
     });
-
-
 
 
     // 同步 file附件的数据

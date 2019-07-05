@@ -30,26 +30,27 @@
         ORDER BY t.create_date DESC
     </select>
 
-    <insert id="addRecord" useGeneratedKeys="true"  keyProperty="rid">
+    <insert id="addRecord" useGeneratedKeys="true" keyProperty="rid">
         <selectKey order="AFTER" resultType="java.lang.String" keyProperty="rid">
             SELECT SEQ_MODIFY_COMPLAINT_HISTORY.currval FROM dual
         </selectKey>
-          INSERT INTO modify_complaint_history (rid,modify_username,emp_id,create_date,leasts,customercode,content,reason)
-          VALUES (SEQ_MODIFY_COMPLAINT_HISTORY.NEXTVAL,#{modify_username},#{emp_id},#{create_date},#{leasts},#{customercode},#{content},#{reason})
-	</insert>
+        INSERT INTO modify_complaint_history (rid,modify_username,emp_id,create_date,leasts,customercode,content,reason)
+        VALUES
+        (SEQ_MODIFY_COMPLAINT_HISTORY.NEXTVAL,#{modify_username},#{emp_id},#{create_date},#{leasts},#{customercode},#{content},#{reason})
+    </insert>
 
     <!-- 做关联查询-->
-    <select id="getRecordByRid" resultMap ="Record">
+    <select id="getRecordByRid" resultMap="Record">
         SELECT *
-		FROM modify_complaint_history t
-		WHERE t.rid = #{rid}
-	</select>
+        FROM modify_complaint_history t
+        WHERE t.rid = #{rid}
+    </select>
 
     <!-- 由于只有一条插入操作并只涉及Record 就将 AttachFile 的Dao操作写在RecordMapper下-->
-    <insert id="addAttachFile" useGeneratedKeys="true"  keyProperty="fileid">
-          INSERT INTO MODIFY_FLIE_ATTACH (fileid,rid,filename,filepath,filesize,create_date)
-          VALUES (SEQ_MODIFY_FILE_ATTACH.NEXTVAL,#{rid},#{filename},#{filepath},#{filesize},#{create_date})
-	</insert>
+    <insert id="addAttachFile" useGeneratedKeys="true" keyProperty="fileid">
+        INSERT INTO MODIFY_FLIE_ATTACH (fileid,rid,filename,filepath,filesize,create_date)
+        VALUES (SEQ_MODIFY_FILE_ATTACH.NEXTVAL,#{rid},#{filename},#{filepath},#{filesize},#{create_date})
+    </insert>
 
     <select id="getAttachFilesByRid" resultType="com.suntak.eightdisciplines.entity.AttachFile">
         SELECT *

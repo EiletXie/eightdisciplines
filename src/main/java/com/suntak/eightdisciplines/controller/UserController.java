@@ -20,30 +20,30 @@ public class UserController {
 
 
     @PostMapping("/loginUser")
-    public String loginUser(@RequestParam("username") String username,@RequestParam("password") String password,ModelMap map,HttpSession session){
+    public String loginUser(@RequestParam("username") String username, @RequestParam("password") String password, ModelMap map, HttpSession session) {
         User user = new User();
         user.setUsername(username);
         String pwd = encodeInMD5(password);
         user.setPassword(pwd);
-        System.out.println("User :" + user.getUsername() + " pwd  "+ user.getPassword());
+        System.out.println("User :" + user.getUsername() + " pwd  " + user.getPassword());
         User u = userService.loginUser(user);
-        map.addAttribute("customerComplaint",new CustomerComplaint());
-        if(u != null) {
-            session.setAttribute("user",u);
-            session.setAttribute("loginFlag",true);
-            session.setMaxInactiveInterval(30*60);
+        map.addAttribute("customerComplaint", new CustomerComplaint());
+        if (u != null) {
+            session.setAttribute("user", u);
+            session.setAttribute("loginFlag", true);
+            session.setMaxInactiveInterval(30 * 60);
             return "complaintChange";
         } else {
-            map.addAttribute("user",user);
-            session.setAttribute("loginFlag",false);
+            map.addAttribute("user", user);
+            session.setAttribute("loginFlag", false);
             return "index";
         }
     }
 
     @GetMapping("/userInfo")
-    public String getUserInfo(@RequestParam("user_name") String username, Model model){
+    public String getUserInfo(@RequestParam("user_name") String username, Model model) {
         User u = userService.getUserInfoByUsername(username);
-        if(u != null) {
+        if (u != null) {
             model.addAttribute("userFlag", true);
             model.addAttribute("user", u);
             return "complaintChange";
@@ -54,11 +54,11 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String getUserInfo(ModelMap map){
+    public String getUserInfo(ModelMap map) {
         // thymeleaf模板引擎当要进入一个表单提交对象的页面时，必须先提供一个对象给页面
         User user = new User();
-       map.addAttribute("user",user);
-       return "index";
+        map.addAttribute("user", user);
+        return "index";
     }
 
     // 密码 MD5加密

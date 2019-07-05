@@ -11,12 +11,14 @@
     </select>
 
     <insert id="addBlameProcess">
-          INSERT INTO spfs30_8d_sell_blame_opers (base_uid,standard_operation_code,operation_description,blame_content,blame_type)
-          VALUES (#{base_uid},#{standard_operation_code},#{operation_description},#{blame_content,jdbcType=VARCHAR},#{blame_type})
-	</insert>
+        INSERT INTO spfs30_8d_sell_blame_opers
+        (base_uid,standard_operation_code,operation_description,blame_content,blame_type)
+        VALUES
+        (#{base_uid},#{standard_operation_code},#{operation_description},#{blame_content,jdbcType=VARCHAR},#{blame_type})
+    </insert>
 
 
-    <delete id="deleteBlamesByBaseUid" >
+    <delete id="deleteBlamesByBaseUid">
         DELETE FROM spfs30_8d_sell_blame_opers WHERE base_uid = #{base_uid}
     </delete>
 

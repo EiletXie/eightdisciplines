@@ -15,7 +15,7 @@ public class CommonUtilsServiceImpl implements CommonUtilsService {
     CommonUtilsDao commonUtilsDao;
 
     @Override
-    public List<BlameProcess> getBlameSelectOptions(String org_id, String item_id){
-        return commonUtilsDao.getBlameSelectOptions(org_id,item_id);
+    public List<BlameProcess> getBlameSelectOptions(String org_id, String item_id) {
+        return commonUtilsDao.getBlameSelectOptions(org_id, item_id);
     }
 }

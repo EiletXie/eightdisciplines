@@ -22,8 +22,8 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<Record> getRecordByOptions(Date startdate, Date enddate,String leasts) {
-        return recordDao.getRecordByOptions(startdate,enddate,leasts);
+    public List<Record> getRecordByOptions(Date startdate, Date enddate, String leasts) {
+        return recordDao.getRecordByOptions(startdate, enddate, leasts);
     }
 
     @Override

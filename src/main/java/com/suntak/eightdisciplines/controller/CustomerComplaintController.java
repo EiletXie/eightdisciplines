@@ -63,6 +63,12 @@ public class CustomerComplaintController {
                 c.setClaimtypes(claimtypes);
             }
 
+            switch (c.getStatus()){
+               case "E" : c.setStatus("已完成");break;
+               case "T" : c.setStatus("已删除");break;
+               case "R" : c.setStatus("已回退");break;
+               default:c.setStatus("在流程中");break;
+            }
 
         }
 
@@ -113,7 +119,7 @@ public class CustomerComplaintController {
             record.setCustomercode(oldComplaint.getCustomcode());
             record.setLeasts(oldComplaint.getLeasts());
             // 将变更内容进行封装
-            String content = customerComplaintService.getComplaintChangeContent(nowComplaint,files);
+            String content = customerComplaintService.getComplaintChangeContent(nowComplaint, files);
             record.setContent(content);
             record.setCreate_date(new Date());
             System.out.println(complaint);
@@ -140,7 +146,7 @@ public class CustomerComplaintController {
                     String filePath = "//usr//local//attachfiles-8d//";
                     // 上传Linux服务器，要求不能出现中文路径
                     fileName = UUID.randomUUID() + suffixName;
-                    attachFile.setFilepath(filePath+fileName);
+                    attachFile.setFilepath(filePath + fileName);
                     File dest = new File(filePath + fileName);
                     // 检测是否存在目录
                     if (!dest.getParentFile().exists()) {
@@ -197,7 +203,7 @@ public class CustomerComplaintController {
             User user = (User) session.getAttribute("user");
             if (!"".equals(user.getUsername()) && user.getUsername() != null) {
                 Record record = new Record();
-                record.setModify_username(user.getUsername());
+                record.setModify_username(user.getAlternateName());
                 record.setEmp_id(user.getEmpId());
                 record.setLeasts(complaint.getLeasts());
                 record.setReason(reason);
@@ -212,7 +218,6 @@ public class CustomerComplaintController {
         }
         return Msg.success();
     }
-
 
 
     @GetMapping("/complaintChange")

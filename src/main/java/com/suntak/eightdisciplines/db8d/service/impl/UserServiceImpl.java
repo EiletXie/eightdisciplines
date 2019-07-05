@@ -15,11 +15,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User loginUser(User user) {
-        if(userDao.loginUser(user) >= 1) {
+        if (userDao.loginUser(user) >= 1) {
             User u = userDao.getUserInfoByUsername(user.getUsername());
             System.out.println(u);
             return u;
-        }else{
+        } else {
             System.out.println("find nothing!!!");
             return null;
 
