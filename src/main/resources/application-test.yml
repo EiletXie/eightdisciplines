@@ -10,16 +10,16 @@ spring:
   datasource:
     hikari:
       8d:
-        jdbc-url: jdbc:oracle:thin:@192.168.0.217:1521:orcl
+        jdbc-url: ----
         driver-class-name: oracle.jdbc.driver.OracleDriver
-        username: spfs
-        password: password
+        username: ----
+        password: ----
       # ERP
       erp:
-        jdbc-url: jdbc:oracle:thin:@10.1.100.12:1521:PROD2
+        jdbc-url: ----
         driver-class-name: oracle.jdbc.driver.OracleDriver
-        username: appsclone
-        password: appsclone
+        username: ----
+        password: ----
 
 
 
