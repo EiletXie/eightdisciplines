@@ -1,0 +1,33 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /EightDesciplines
+
+
+spring:
+  datasource:
+    hikari:
+      8d:
+        jdbc-url: jdbc:oracle:thin:@192.168.0.70:1521:orcl
+        driver-class-name: oracle.jdbc.driver.OracleDriver
+        username: spfs
+        password: password
+      # ERP
+      erp:
+        jdbc-url: jdbc:oracle:thin:@10.1.100.12:1521:PROD2
+        driver-class-name: oracle.jdbc.driver.OracleDriver
+        username: appsclone
+        password: appsclone
+
+
+thymeleaf:
+  cache: false
+  check-template-location: true
+  servlet:
+    content-type: text/html
+  enabled: true
+  mode: LEGACYHTML5
+  prefix: classpath:/templates/
+  suffix: .html
+  encoding: utf-8
+
