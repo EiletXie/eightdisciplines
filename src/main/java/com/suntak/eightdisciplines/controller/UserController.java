@@ -3,6 +3,7 @@ package com.suntak.eightdisciplines.controller;
 import com.suntak.eightdisciplines.entity.CustomerComplaint;
 import com.suntak.eightdisciplines.entity.User;
 import com.suntak.eightdisciplines.db8d.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.security.MessageDigest;
 
 @Controller
+@Slf4j
 public class UserController {
 
     @Resource
@@ -25,14 +27,20 @@ public class UserController {
         user.setUsername(username);
         String pwd = encodeInMD5(password);
         user.setPassword(pwd);
-        System.out.println("User :" + user.getUsername() + " pwd  " + user.getPassword());
+        log.info("User :" + user.getUsername() + " pwd  " + user.getPassword() + " role: " + user.getRole());
         User u = userService.loginUser(user);
         map.addAttribute("customerComplaint", new CustomerComplaint());
         if (u != null) {
+            if(u.getRole() != null && u.getRole().equals("品保专员")){
+                map.addAttribute("user", user);
+                session.setAttribute("loginFlag", false);
+                return "index";
+            }
             session.setAttribute("user", u);
             session.setAttribute("loginFlag", true);
             session.setMaxInactiveInterval(30 * 60);
             return "complaintChange";
+
         } else {
             map.addAttribute("user", user);
             session.setAttribute("loginFlag", false);

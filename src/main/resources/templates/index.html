@@ -63,9 +63,9 @@
 
 <body>
 
-<h5 class="text-center">本系统推荐使用浏览器:
-    <span class="label label-success">Chrome</span> <span class="label label-success">Firefox</span>
-    不兼容IE内核浏览器: <span class="label label-danger">IE</span>
+<h5 class="text-center text-danger">本系统支持浏览器:
+    <span class="label label-success">谷歌</span> <span class="label label-success">火狐</span>
+    不兼容IE浏览器: <span class="label label-danger">IE</span>
 </h5>
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -83,7 +83,7 @@
                             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>密码：</label>
                         <input type="password" th:field="*{password}" class="form-control" id="password"
                                placeholder="Password">
-                        <span class="help-block" th:text="${session.loginFlag == false ? '用户名或者密码错误' : ''}"></span>
+                        <span class="help-block" th:text="${session.loginFlag == false ? '用户名或者密码错误或无操作权限' : ''}"></span>
                     </div>
                     <div class="checkbox">
                         <label>

@@ -1,6 +1,7 @@
 package com.suntak.eightdisciplines.dbErp.service;
 
 import com.suntak.eightdisciplines.entity.BlameProcess;
+import com.suntak.eightdisciplines.entity.FinanceDebit;
 
 import java.util.List;
 
@@ -15,4 +16,18 @@ public interface CommonUtilsService {
      * @return
      */
     List<BlameProcess> getBlameSelectOptions(String org_id, String item_id);
+
+
+    /**
+     * 获取订单行对应的 扣款单发送方和接收方信息
+     * @param orderhead
+     * @return
+     */
+    FinanceDebit getErpFinanceDebitInfo(String orderhead);
+
+    /**
+     * 插入一条 扣款记录到ERP中
+     * @param financeDebit
+     */
+    void insertErpDecreaseFinanaceDebit(FinanceDebit financeDebit);
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html >
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div class="panel panel-primary">
+    <div class="panel-heading">选择操作</div>
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            <li th:if = "${session.user.role != '财务专员'}">
+                <a href="complaint/complaintChange">客诉修改</a></li>
+            <li th:if = "${session.user.role != '财务专员'}">
+                <a href="record/complaintRecord">历史记录统计</a></li>
+            <li th:if = "${session.user.role == '财务专员' || session.user.alternateName =='8dadmin'}">
+                <a href="financeDebit/financeDebitRecord">财务扣款单记录</a></li>
+            <li th:if = "${session.user.role == '财务专员' || session.user.alternateName =='8dadmin'}">
+                <a href="financeDebit/financeDebitDecreaseRecord">扣款单扣减记录</a></li>
+        </ul>
+    </div>
+</div>

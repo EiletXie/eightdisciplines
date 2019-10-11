@@ -11,6 +11,7 @@
         <result property="userId" column="user_id"/>
         <result property="email" column="user_email"/>
         <result property="active" column="active"/>
+        <result property="role" column="name_desc"/>
     </resultMap>
 
     <select id="loginUser" resultType="Integer">
@@ -20,10 +21,12 @@
     </select>
 
     <select id="getUserInfoByUsername" resultMap="userResultMap">
-        SELECT t.user_name,t.user_password,s.emp_id,s.alternate_name,
+        SELECT t.user_name,t.user_password,s.emp_id,s.alternate_name,z.name_desc,
         t.user_email,t.user_id,t.active
         FROM sc.users t
         LEFT JOIN user_details s ON t.user_name = s.real_name
-        WHERE t.user_name = #{username}
+        LEFT JOIN form_role_emp x on x.emp_id = s.emp_id
+        LEFT JOIN form_role z on z.role_uid = x.role_uid
+        WHERE t.user_name = #{username} and rownum <![CDATA[<]]> 2
     </select>
 </mapper>

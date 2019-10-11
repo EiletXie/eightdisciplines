@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suntak.eightdisciplines.db8d.dao.FinanceDebitDao">
+
+    <select id="getFinanceDebitList" resultType="com.suntak.eightdisciplines.entity.FinanceDebit">
+        SELECT *
+        FROM FINANCE_DEBIT_RECORD t
+        WHERE t.STATUS = 'N'
+    </select>
+
+    <select id="getDecreaseListWithOptional" resultType="com.suntak.eightdisciplines.entity.FinanceDebit">
+        SELECT *
+        FROM FINANCE_DEBIT_DECREASE_RECORD t
+        WHERE t.DATE_CREATE >= #{START_DATE} AND t.DATE_CREATE <![CDATA[<=]]> #{END_DATE}
+        <if test='INVOICE_NO != null and INVOICE_NO != "" '>
+            AND T.INVOICE_NO  = #{INVOICE_NO}
+        </if>
+        <if test='CUSTOMER_CODE != null  and CUSTOMER_CODE != "" '>
+            AND T.CUSTOMER_CODE  = #{CUSTOMER_CODE}
+        </if>
+    </select>
+
+      <!-- 查询界面 带条件-->
+    <select id="getListWithOptional" resultType="com.suntak.eightdisciplines.entity.FinanceDebit">
+        SELECT *
+        FROM FINANCE_DEBIT_RECORD t
+        WHERE t.DATE_CREATE >= #{START_DATE} AND t.DATE_CREATE <![CDATA[<=]]> #{END_DATE}
+        <if test='INVOICE_NO != null and INVOICE_NO != "" '>
+            AND T.INVOICE_NO  = #{INVOICE_NO}
+        </if>
+        <if test='CUSTOMER_CODE != null  and CUSTOMER_CODE != "" '>
+            AND T.CUSTOMER_CODE  = #{CUSTOMER_CODE}
+        </if>
+    </select>
+
+
+    <select id="getFinanceDebitById" resultType="com.suntak.eightdisciplines.entity.FinanceDebit">
+        SELECT *
+        FROM FINANCE_DEBIT_RECORD t
+        WHERE t.BASE_UID  = #{base_uid} AND ROWNUM <![CDATA[<]]> 2
+    </select>
+
+
+    <update id="updateFinanceDebitStatus" parameterType="java.util.List">
+        <foreach collection="list" item="bean" index="index" open="begin" close=";end;" separator=";">
+            UPDATE FINANCE_DEBIT_RECORD
+            <set>
+                STATUS = 'Y'
+            </set>
+            <where>
+                BASE_UID = #{bean.base_uid}
+            </where>
+        </foreach>
+    </update>
+
+    <!-- 根据表单ID查看索赔流程中涉及的财务人员和商务人员对应的邮箱集合 -->
+    <select id="getEmailListById" resultType="java.lang.String">
+           SELECT S.USER_EMAIL FROM SC.USERS S
+                  WHERE S.USER_ID IN
+                        (SELECT X.APPROVER_USER
+                           FROM FLOW_BOX X
+                          WHERE X.BASE_UID = #{base_uid}
+                             AND (X.STATION = '000500' OR X.ROLE_UID = '000000000048'))
+    </select>
+
+    <resultMap id="FinanceDebitMap" type="com.suntak.eightdisciplines.entity.FinanceDebit">
+        <result property="base_uid" column="BASE_UID"/>
+        <result property="invoice_no" column="RMANO"/>
+        <result property="orderhead" column="ORDERHEAD"/>
+        <result property="orderline" column="ORDERLINE"/>
+        <result property="customer_category" column="BADCATEGORY"/>
+        <result property="customer_po" column="CUSTOMPONO"/>
+        <result property="model" column="MODEL"/>
+
+        <result property="customer_number" column="CUSTOMER_NUMBER"/>
+        <result property="customer_code" column="CUSTOMCODE"/>
+        <result property="unit" column="UNIT"/>
+        <result property="price" column="PRICE"/>
+        <result property="pcbnum" column="PCBNUM"/>
+        <result property="clamtotal" column="CLAMTOTAL"/>
+        <result property="currency" column="CURRENCY"/>
+        <result property="invoice_date" column="DATE_UPDATE"/>
+    </resultMap>
+
+
+    <select id="getClaiInfo" resultMap="FinanceDebitMap">
+        SELECT CLAI.BASE_UID,
+         SELL.CUSTOMCODE,
+        SELL.ORDERHEAD,
+        SELL.ORDERLINE,
+        SELL.BADCATEGORY,
+        SELL.CUSTOMPONO,
+        SELL.MODEL,
+        SELL.CUSTOMER_NUMBER,
+        SELL.CURRENCY,
+        CLAI.RMANO,
+        CLAI.CLAMTOTAL,
+        CLAI.DATE_UPDATE,
+        LINE.UNIT,
+        LINE.PRICE,
+        LINE.PCBNUM
+        FROM SPFS.BASE_FORM BASE_FORM
+        LEFT JOIN SPFS.SPFS32_8D_CLAI CLAI ON CLAI.BASE_UID = BASE_FORM.BASE_UID
+        LEFT JOIN SPFS.SPFS30_8D_SELL SELL ON CLAI.WD_BASE_UID = SELL.BASE_UID
+        LEFT JOIN SPFS32_CLAI_LINE LINE ON LINE.BASE_UID = CLAI.BASE_UID
+        AND ROWNUM <![CDATA[<]]> 2
+        WHERE CLAI.RMANO = #{invoice_no} AND ROWNUM <![CDATA[<]]> 2
+    </select>
+
+    <insert id="addFinanceDebit">
+           INSERT INTO FINANCE_DEBIT_RECORD(BASE_UID, MODEL, CUSTOMER_PO, ORDERHEAD, ORDERLINE,
+        CUSTOMER_CATEGORY, CUSTOMER_CODE,CUSTOMER_NUMBER, UNIT, QTY, UNITPRICE, TOTAL_AMOUNT,
+        RECEIVE_TO,RECEIVE_TEL,RECEIVE_BILL_TO,RECEIVE_SHIP_TO,
+        RECEIVE_CONTACT, CURRENCY, RECEIVE_FAX, FOB_POINT_CODE,
+        RECEIVE_COUNTRY,SEND_FROM,SEND_ADDRESS,SEND_TEL,SEND_POSTCODE,
+        SEND_FAX,TERMS_NAME,PRINT_TIMES,INVOICE_DATE,INVOICE_NO,
+        PRODUCT_INFO,DATE_CREATE)
+        VALUES(#{base_uid,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, #{customer_po,jdbcType=VARCHAR}, #{orderhead,jdbcType=VARCHAR}, #{orderline,jdbcType=VARCHAR}, #{customer_category,jdbcType=VARCHAR},
+        #{customer_code,jdbcType=VARCHAR}, #{customer_number,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{qty,jdbcType=VARCHAR}, #{unitprice,jdbcType=VARCHAR}, #{total_amount,jdbcType=VARCHAR},  #{receive_to,jdbcType=VARCHAR},
+        #{receive_tel,jdbcType=VARCHAR}, #{receive_bill_to,jdbcType=VARCHAR}, #{receive_ship_to,jdbcType=VARCHAR}, #{receive_contact,jdbcType=VARCHAR},#{currency,jdbcType=VARCHAR}, #{receive_fax,jdbcType=VARCHAR},
+        #{fob_point_code,jdbcType=VARCHAR},#{receive_country,jdbcType=VARCHAR}, #{send_from,jdbcType=VARCHAR}, #{send_address,jdbcType=VARCHAR}, #{send_tel,jdbcType=VARCHAR}, #{send_postcode,jdbcType=VARCHAR}, #{send_fax,jdbcType=VARCHAR}, #{terms_name,jdbcType=VARCHAR},
+        #{print_times,jdbcType=VARCHAR}, #{invoice_date,jdbcType=VARCHAR}, #{invoice_no,jdbcType=VARCHAR},  #{product_info,jdbcType=VARCHAR},SYSDATE)
+    </insert>
+
+    <!-- 向扣减财务扣款单表插入数据-->
+    <insert id="addDecreaseFinanceDebit">
+           INSERT INTO FINANCE_DEBIT_DECREASE_RECORD(DECR_ID,BASE_UID, MODEL, CUSTOMER_PO, ORDERHEAD, ORDERLINE,
+        CUSTOMER_CATEGORY, CUSTOMER_CODE,CUSTOMER_NUMBER, UNIT, QTY, UNITPRICE,DECREASE_AMOUNT, TOTAL_AMOUNT,
+        RECEIVE_TO,RECEIVE_TEL,RECEIVE_BILL_TO,RECEIVE_SHIP_TO,
+        RECEIVE_CONTACT, CURRENCY, RECEIVE_FAX, FOB_POINT_CODE,
+        RECEIVE_COUNTRY,SEND_FROM,SEND_ADDRESS,SEND_TEL,SEND_POSTCODE,
+        SEND_FAX,TERMS_NAME,PRINT_TIMES,INVOICE_DATE,INVOICE_NO,
+        PRODUCT_INFO,DATE_CREATE)
+        VALUES(SEQ_FINANCE_DEBIT_DECREASE.NEXTVAL,#{base_uid,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, #{customer_po,jdbcType=VARCHAR}, #{orderhead,jdbcType=VARCHAR}, #{orderline,jdbcType=VARCHAR}, #{customer_category,jdbcType=VARCHAR},
+        #{customer_code,jdbcType=VARCHAR}, #{customer_number,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{qty,jdbcType=VARCHAR}, #{unitprice,jdbcType=VARCHAR},#{decrease_amount,jdbcType=VARCHAR},  #{total_amount,jdbcType=VARCHAR},  #{receive_to,jdbcType=VARCHAR},
+        #{receive_tel,jdbcType=VARCHAR}, #{receive_bill_to,jdbcType=VARCHAR}, #{receive_ship_to,jdbcType=VARCHAR}, #{receive_contact,jdbcType=VARCHAR},#{currency,jdbcType=VARCHAR}, #{receive_fax,jdbcType=VARCHAR},
+        #{fob_point_code,jdbcType=VARCHAR},#{receive_country,jdbcType=VARCHAR}, #{send_from,jdbcType=VARCHAR}, #{send_address,jdbcType=VARCHAR}, #{send_tel,jdbcType=VARCHAR}, #{send_postcode,jdbcType=VARCHAR}, #{send_fax,jdbcType=VARCHAR}, #{terms_name,jdbcType=VARCHAR},
+        #{print_times,jdbcType=VARCHAR}, #{invoice_date,jdbcType=VARCHAR}, #{invoice_no,jdbcType=VARCHAR},  #{product_info,jdbcType=VARCHAR},SYSDATE)
+    </insert>
+
+
+
+
+    <update id="updateFinanceDebitAmount">
+        UPDATE FINANCE_DEBIT_RECORD
+        SET UNITPRICE = #{UNITPRICE}
+        WHERE BASE_UID = #{BASE_UID}
+    </update>
+
+    <delete id="deleteFinanceDebit">
+        DELETE FROM FINANCE_DEBIT_RECORD
+        WHERE BASE_UID = #{BASE_UID}
+    </delete>
+
+    <select id="checkFinanceDebitByBase_uid" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM FINANCE_DEBIT_RECORD
+        WHERE BASE_UID = #{BASE_UID}
+    </select>
+</mapper>

@@ -1,0 +1,764 @@
+<!DOCTYPE html >
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <!-- datetimepicker -->
+    <script type="text/javascript" th:src="@{/js/jquery-ui-1.11.4/jquery-ui.js}"></script>
+    <link th:href="@{/js/jquery-ui-1.11.4/jquery-ui.css}" rel="stylesheet"/>
+    <!-- Bootstrap -->
+    <!-- <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.css/bootstrap.min.css" rel="stylesheet">-->
+    <link th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <script th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js" ></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <base th:href="${#request.getContextPath()}+'/'">
+    <title>财务扣款单记录界面</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/8d.ico}"/>
+    <style type="text/css">
+
+
+        #brand {
+            width: 200px;
+            height: 40px;
+        }
+
+        #userImg {
+            width: 150px;
+            height: 150px;
+        }
+
+        body {
+            padding-top: 70px;
+            padding-bottom: 20px;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        td, th {
+            text-align: center;
+            align: middle;
+        }
+    </style>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <!--图标 -->
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            <img alt="Brand" th:src="@{/images/suntak.jpg}" class="img-thumbnail" id="brand">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-1 col-md-offset-6">
+                <button type="button" class="btn btn-warning btn-sm navbar-btn" id="loginBtn">
+                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                    Login
+                </button>
+            </div>
+        </div>
+        </div>
+    </nav>
+</head>
+
+<body>
+<!-- 客诉编辑模态框 -->
+<div class="modal fade" id="recordUpdateModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog  modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">扣款单明细</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" id="finaceDebitForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">To:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_to_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">From:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="send_from_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Bill To:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_bill_to_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Address:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="send_address_static"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Ship To:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_ship_to_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Tel:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="send_tel_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Tel:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_tel_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Post Code:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="send_postcode_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Contact:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_contack_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Terms:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="terms_name_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Currency:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="curreny_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Invoice Date:</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="invoice_date_static"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Country</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="receive_country_static"></p>
+                        </div>
+                        <label class="col-sm-2 control-label">Invoice No</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static" id="invoice_no_static"></p>
+                        </div>
+                    </div>
+                    <!-- 显示表格数据 -->
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>ITEM</th>
+                                    <th>P.O#</th>
+                                    <th>Line#</th>
+                                    <th>Order#</th>
+                                    <th>Model</th>
+                                    <th>Part Number</th>
+                                    <th>Unit</th>
+                                    <th>QTY</th>
+                                    <th>Unit Price</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th>1</th>
+                                <th><p id="customer_po_static"></p></th>
+                                <th><p id="orderline_static"></p></th>
+                                <th><p id="orderhead_static"></p></th>
+                                <th><p id="model_static"></p></th>
+                                <th><p id="customer_category_static"></p></th>
+                                <th><p id="unit_static"></p></th>
+                                <th><p id="qty_static"></p></th>
+                                <th><p id="unitprice_static"></p></th>
+                                <th><p id="total_amount_static"></p></th>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 补录扣款单记录 RMA -->
+<div class="modal fade" id="addFinanceDebitModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">扣款单补录</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="complaintDeleteForm">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">RMA: </label>
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <input type="text" id="INVOICE_NO_INPUT">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="add_financedebit_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 左侧列表项 -->
+    <div class="col-md-2">
+        <div class="panel panel-primary">
+            <div class="panel-heading">个人信息</div>
+            <div class="panel-body" align="center">
+                <img th:src="@{/images/user-image.png}" class="img-responsive img-rounded img-thumbnail" id="userImg"/>
+                <p class="text-center text-primary" th:text="${'欢迎，' + session.user.alternateName}">
+                    &nbsp;欢迎来到财务扣款记录界面</p>
+                <p class="text-center text-warning" th:text="${'Email：' + session.user.email}">&nbsp;</p>
+            </div>
+        </div>
+
+        <!-- 根据用户权限提供给用户选择的界面-->
+        <div class="userSelectPanel"></div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form>
+                    <div>
+                    <div class="form-group">
+                        <label for="startdate">时间：</label>
+                        <input type="text" id="startdate" class="choosedate">-
+                        <input type="text" id="enddate" class="choosedate">
+                    </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="INVOICE_NO">RMA-NO：</label>
+                            <input type="text" id="INVOICE_NO">
+                        </div>
+                        <div class="form-group">
+                            <label for="CUSTOMER_CODE">客户编码：</label>
+                            <input type="text" id="CUSTOMER_CODE">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default" id="record_find_btn">查询</button>
+                    <button type="button" class="btn btn-success" id="exportBtn">导出</button>
+
+                    <button type="button" class="btn btn-danger" id="add_debit_model_btn"
+                            data-toggle="modal" data-target="#addFinanceDebitModal">扣款单补录</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 显示表格数据 -->
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered" id="records_table">
+                    <thead>
+                    <tr class="text-center">
+                        <th><input type="checkbox" id="checkbox_select_all"> </th>
+                        <th>生产型号</th>
+                        <th>RMA</th>
+                        <th>客户名称</th>
+                        <th>索赔金额</th>
+                        <th>扣减金额</th>
+                        <th>客户编码</th>
+                        <th>订单头</th>
+                        <th>订单行</th>
+                        <th>日期</th>
+                        <th>工厂</th>
+                        <th><button class="btn btn-danger" id="decrease_amount_btn">扣减</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <!-- 索赔总额 -->
+                <div class="col-md-2" id="clai_total_area"></div>
+                <!-- 扣款总额 -->
+                <div class="col-md-2" id="decrease_total_area">
+                </div>
+            </div>
+            <div class="row">
+                <!-- 分页文字信息 -->
+                <div class="col-md-12" id="page_info_area"></div>
+                <!-- 分页条信息 -->
+                <div class="col-md-8 col-md-offset-4" id="page_nav_area">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Footer -->
+<div th:fragment="footer" class="navbar-fixed-bottom">
+    <div class="container text-center">
+        崇达技术股份有限公司 © Suntak 8D
+    </div>
+</div>
+
+
+<a th:href="${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'} "
+   id="contextPath"></a>
+<script type="text/javascript">
+    var contextPath = $('#contextPath').attr('href');
+    var totalRecord, currentPage;
+    //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
+    $(function () {
+
+        var nowday = new Date().format("yyyy-MM-dd");
+        $("#startdate").val(nowday);
+        $("#enddate").val(nowday);
+
+
+        //页面一加载，跳转到第一页
+        to_page(1);
+
+        // 加载用户选择界面 ("select.html")
+        $(".userSelectPanel").load(contextPath+"/complaint/userSelectPanel");
+    });
+
+
+    $("#add_financedebit_btn").click(function () {
+        $.ajax({
+            url: contextPath + "/financeDebit/addOldFinanceDebit",
+            data: {
+                INVOICE_NO: $("#INVOICE_NO_INPUT").val()
+            },
+            type: "POST",
+            success: function (result) {
+                console.log(result);
+                var code = result.code;
+                if(code == 100)
+                    alert("录入成功！");
+                else if(code == 200){
+                    alert(result.extend.content);
+                }
+            }
+        });
+    });
+
+    // 扣款记录扣减按钮点击，将勾选的记录进行财务扣款
+    $("#decrease_amount_btn").click(function () {
+           // 获取勾选的记录ID和当前行的扣减金额
+       $.each($(".records_select:checked"),function () {
+           var tdList = $(this).parent().parent("tr").children("td");
+           // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第11列是查看数据的button
+           var decrease_amount = tdList.eq(5).children("input").eq(0).val();
+           var base_uid = tdList.eq(11).children("button").eq(0).attr("edit-id");
+           var org_id = tdList.eq(10).children("select").eq(0).val();
+
+           $.ajax({
+               url: contextPath + "/financeDebit/decreaseFinanceDebit",
+               data: {
+                   decrease_amount: decrease_amount,
+                   base_uid: base_uid,
+                   org_id:org_id
+               },
+               type: "POST",
+               success: function (result) {
+
+               }
+           });
+       })
+
+        parent.location.reload();
+    });
+
+
+
+
+    // 记录勾选的索赔总金额和扣款总金额
+    var clai_total = 0;
+    var decrease_total = 0;
+
+    function checkbox_select(obj){
+        var tdList = $(obj).parent().parent("tr").children("td");
+        console.log(tdList);
+        // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量
+        var decrease_amount = tdList.eq(5).children("input").eq(0).val();
+        var clai_amount = tdList.eq(4).text();
+        if(parseFloat(clai_amount) < parseFloat(decrease_amount)) {
+            alert("扣款金额不允许比索赔金额大！");
+        }else {
+            if ($(obj).is(':checked')) {
+                clai_total = clai_total +  parseFloat(clai_amount);
+                decrease_total = decrease_total + parseFloat(decrease_amount);
+            } else {
+                clai_total = clai_total -  parseFloat(clai_amount);
+                decrease_total = decrease_total -  parseFloat(decrease_amount);
+            }
+
+            $("#clai_total_area").empty();
+            $("#clai_total_area").append("索赔总金额： " + Math.round(clai_total * 100) / 100);
+            $("#decrease_total_area").empty();
+            $("#decrease_total_area").append("扣款总金额： " + Math.round(decrease_total  * 100) / 100);
+        }
+    }
+
+    function count_total(){
+         clai_total = 0;
+         decrease_total = 0;
+        $.each($(".records_select:checked"),function () {
+            var tdList = $(this).parent().parent("tr").children("td");
+            // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第11列是查看数据的button
+            var decrease_amount = tdList.eq(5).children("input").eq(0).val();
+            var clai_amount = tdList.eq(4).text();
+            var checkbox_obj = tdList.eq(0).children("input");
+            if(parseFloat(clai_amount) < parseFloat(decrease_amount)) {
+                alert("扣款金额不允许比索赔金额大！");
+            }else {
+                if (checkbox_obj.is(':checked')) {
+                    clai_total = clai_total +  parseFloat(clai_amount);
+                    decrease_total = decrease_total + parseFloat(decrease_amount);
+                } else {
+                    clai_total = clai_total -  parseFloat(clai_amount);
+                    decrease_total = decrease_total -  parseFloat(decrease_amount);
+                }
+
+                $("#clai_total_area").empty();
+                $("#clai_total_area").append("索赔总金额： " + Math.round(clai_total * 100) / 100);
+                $("#decrease_total_area").empty();
+                $("#decrease_total_area").append("扣款总金额： " + Math.round(decrease_total  * 100) / 100);
+            }
+        });
+    }
+
+    $("#checkbox_select_all").click(function () {
+
+        var check_flag = $("#checkbox_select_all").is(':checked');
+        $.each($(".records_select"),function () {
+            if(check_flag){
+                $(this).attr("checked",true);
+            }else{
+                $(this).attr("checked",false);
+            }
+
+            var tdList = $(this).parent().parent("tr").children("td");
+            // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第12列是查看数据的button
+            var decrease_amount = tdList.eq(5).children("input").eq(0).val();
+            var clai_amount = tdList.eq(4).text();
+            var checkbox_obj = tdList.eq(0).children("input");
+
+            if (checkbox_obj.is(':checked')) {
+                clai_total = clai_total +  parseFloat(clai_amount);
+                decrease_total = decrease_total + parseFloat(decrease_amount);
+            } else {
+                clai_total = clai_total -  parseFloat(clai_amount);
+                decrease_total = decrease_total -  parseFloat(decrease_amount);
+            }
+
+            $("#clai_total_area").empty();
+            $("#clai_total_area").append("索赔总金额： " + Math.round(clai_total * 100) / 100);
+            $("#decrease_total_area").empty();
+            $("#decrease_total_area").append("扣款总金额： " + Math.round(decrease_total  * 100) / 100);
+
+        });
+    });
+    Date.prototype.format = function (format) {
+        var o = {
+            "M+": this.getMonth() + 1, //month
+            "d+": this.getDate(), //day
+            "h+": this.getHours(), //hour
+            "m+": this.getMinutes(), //minute
+            "s+": this.getSeconds(), //second
+            "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+            "S": this.getMilliseconds() //millisecond
+        }
+        if (/(y+)/.test(format)) {
+            console.log(RegExp.$1.length);
+            format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+        }
+        return format;
+    }
+
+    function to_page(pn) {
+        // 将扣款总额和索赔总额恢复0
+        clai_total = 0;
+        decrease_total = 0;
+        $("#clai_total_area").empty();
+        $("#clai_total_area").append("索赔总金额： " + clai_total);
+        $("#decrease_total_area").empty();
+        $("#decrease_total_area").append("扣款总金额： " + decrease_total);
+
+        var start_day = $("#startdate").val();
+        var end_day = $("#enddate").val();
+        $.ajax({
+            url: contextPath + "/financeDebit/records",
+            data: {
+                pn: pn,
+                startdate: start_day,
+                enddate: end_day,
+                INVOICE_NO: $("#INVOICE_NO").val(),
+                CUSTOMER_CODE: $("#CUSTOMER_CODE").val()
+            },
+            type: "POST",
+            success: function (result) {
+                //console.log(result);
+                //1.在页面解析并显示员工数据
+                build_records_table(result);
+                //2.解析并显示分页信息
+                build_page_info(result);
+                //3.解析显示分页条数据
+                build_page_nav(result);
+            }
+        });
+    }
+
+    
+    
+    //建立用户的表格数据
+    function build_records_table(result) {
+        //先清空表格数据
+        $("#records_table tbody").empty();
+        var records = result.extend.pageInfo.list;
+        $.each(records, function (index, item) {
+            var SELECT_TD = $("<input type='checkbox' class='records_select' onclick='checkbox_select(this);'/>");
+            var CHOOSE_TD = $("<td></td>").append(SELECT_TD);
+            var MODEL_TD = $("<td></td>").append(item.model);
+            var RMA_TD = $("<td></td>").append(item.invoice_no);
+            var CUSTOMER_CODE_TD = $("<td></td>").append(item.customer_code);
+            var CUSTOMER_NUMBER_TD = $("<td></td>").append(item.customer_number);
+            var TOTAL_AMOUNT_TD = $("<td></td>").append(item.unitprice);
+
+            var INPUT_TD = $("<input type='text' onchange='count_total()'/>");
+            INPUT_TD.attr("value",item.unitprice);
+            var DECREASE_AMOUNT_TD = $("<td></td>").append(INPUT_TD);
+            var ORDERHEAD_TD = $("<td></td>").append(item.orderhead);
+            var ORDERLINE_TD = $("<td></td>").append(item.orderline);
+            var date_create = new Date(item.date_create).format("yyyy-MM-dd")
+            var DATE_TD = $("<td></td>").append(date_create);
+
+            var FACTORY_SELECT = $("<select></select>")
+                .append("<option value='81'>崇达股份</option>")
+                .append("<option value='83'>深圳崇达</option>")
+                .append("<option value='84'>大连崇达</option>")
+                .append("<option value='85'>江门一厂</option>")
+                .append("<option value='107'>江门二厂</option>")
+                .append("<option value='147'>崇达科技</option>")
+                .append("<option value='187'>大连崇达电子</option>")
+
+            FACTORY_SELECT.val(item.organization_id);
+            var FACTORY_TD = $("<td></td>").append(FACTORY_SELECT);
+
+            var editBtn = $("<button></button>").addClass("btn btn-primary btn-sm edit_btn")
+                .append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("查看");
+            //为编辑按钮添加自定义属性，表示当前员工id
+            editBtn.attr("edit-id", item.base_uid);
+            var btnTd = $("<td></td>").append(editBtn);
+
+            $("<tr></tr>").append(CHOOSE_TD)
+                .append(MODEL_TD)
+                .append(RMA_TD)
+                .append(CUSTOMER_CODE_TD)
+                .append(TOTAL_AMOUNT_TD)
+                .append(DECREASE_AMOUNT_TD)
+                .append(CUSTOMER_NUMBER_TD)
+                .append(ORDERHEAD_TD)
+                .append(ORDERLINE_TD)
+                .append(DATE_TD)
+                .append(FACTORY_TD)
+                .append(btnTd)
+                .appendTo("#records_table tbody");
+        });
+
+    }
+
+    function build_page_info(result) {
+        $("#page_info_area").empty();
+        $("#page_info_area").append("当前" + result.extend.pageInfo.pageNum
+            + "页，总页数" + result.extend.pageInfo.pages
+            + "页，总" + result.extend.pageInfo.total + "条数");
+        totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
+    }
+
+    //解析显示分页条 ,点击分页有相应的功能跳转
+    function build_page_nav(result) {
+        $("#page_nav_area").empty();
+        //page_nav_area
+        var ul = $("<ul></ul>").addClass("pagination");
+
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页"));
+        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+        if (result.extend.pageInfo.hasPreviousPage == false) {
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        } else {
+            //为元素添加点击翻页的=事件
+            firstPageLi.click(function () {
+                to_page(1);
+            });
+            prePageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum - 1);
+            });
+        }
+
+        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页")); //.attr("href","#")
+        if (result.extend.pageInfo.hasNextPage == false) {
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        } else {
+            lastPageLi.click(function () {
+                to_page(result.extend.pageInfo.pages);
+            });
+            nextPageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum + 1);
+            });
+        }
+
+        ul.append(firstPageLi).append(prePageLi);
+        $.each(result.extend.pageInfo.navigatepageNums, function (index, item) {
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if (result.extend.pageInfo.pageNum == item) {
+                numLi.addClass("active");
+            }
+            numLi.click(function () {
+                to_page(item);
+            });
+            ul.append(numLi);
+        });
+        ul.append(nextPageLi).append(lastPageLi);
+
+        var navEle = $("<nav></nav>").append(ul);
+        navEle.appendTo("#page_nav_area");
+    }
+
+    $(".choosedate").datepicker({dateFormat: "yy-mm-dd"}); //{dateFormat: "yy-mm-dd"}
+
+
+    // 选择时间，点击查询按钮
+    $("#record_find_btn").click(function () {
+        $.ajax({
+            url: contextPath + "/financeDebit/records",
+            type: "POST",
+            data: {
+                startdate: $("#startdate").val(),
+                enddate: $("#enddate").val(),
+                INVOICE_NO: $("#INVOICE_NO").val(),
+                CUSTOMER_CODE: $("#CUSTOMER_CODE").val()
+            },
+            success: function (result) {
+                //1.在页面解析并显示员工数据
+                build_records_table(result);
+                //2.解析并显示分页信息
+                build_page_info(result);
+                //3.解析显示分页条数据
+                build_page_nav(result);
+            }
+        });
+    });
+
+    $(document).on("click", ".edit_btn", function () {
+        var BASE_UID = $(this).attr("edit-id");
+        $.ajax({
+            url: contextPath + "/financeDebit/financeDebitById",
+            type: "POST",
+            data: "BASE_UID=" + BASE_UID,
+            dataType: "json",
+            success: function (result) {
+                var record = result.extend.financeDebit;
+                console.log(record);
+                $("#recordUpdateModal").modal({
+                    backdrop: "static"
+                });
+                $("#receive_to_static").text(record.receive_to);
+                $("#receive_bill_to_static").text(record.receive_bill_to);
+                $("#receive_ship_to_static").text(record.receive_ship_to);
+                $("#receive_contact_static").text(record.receive_contact);
+                $("#currency_static").text(record.currency);
+                $("#receive_country_static").text(record.receive_country);
+                $("#fob_point_code_static").text(record.fob_point_code);
+
+
+                $("#send_from_static").text(record.send_from);
+                $("#send_address_static").text(record.send_address);
+                $("#send_tel_static").text(record.send_tel);
+                $("#send_postcode_static").text(record.send_postcode);
+                $("#send_fax_static").text(record.send_fax);
+                $("#terms_name_static").text(record.terms_name);
+
+
+                $("#model_static").text(record.model);
+                $("#customercode_update_static").text(record.customercode);
+                $("#customer_po_static").text(record.customer_po);
+                $("#orderhead_static").text(record.orderhead);
+                $("#orderline_static").text(record.orderline);
+                $("#customer_category_static").text(record.customer_category);
+                $("#customer_code_static").text(record.customer_code);
+
+                $("#qty_static").text(record.qty);
+                $("#unit_static").text(record.unit);
+                $("#unitprice_static").text(record.unitprice);
+                $("#total_amount_static").text(record.total_amount);
+            }
+        });
+    });
+
+
+
+
+    // 导出客诉修改EXCEL
+    $("#exportBtn").click(function () {
+        var start_day = $("#startdate").val();
+        var end_day = $("#enddate").val();
+
+        window.location.href = contextPath + "financeDebit/export?startdate=" + start_day + "&enddate=" + end_day;
+    });
+
+
+    $("#loginBtn").click(function () {
+        window.location.href = contextPath;
+    })
+
+
+</script>
+
+</body>
+</html>

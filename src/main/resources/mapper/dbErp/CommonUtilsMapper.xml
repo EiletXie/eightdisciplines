@@ -3,9 +3,54 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suntak.eightdisciplines.dbErp.dao.CommonUtilsDao">
+    <resultMap id="FinanceDebitMap" type="com.suntak.eightdisciplines.entity.FinanceDebit">
+        <result property="receive_to" column="cust_name"/>
+        <result property="receive_bill_to" column="InvToAddr"/>
+        <result property="receive_ship_to" column="ShipToAddr"/>
+        <result property="receive_tel" column="cust_tel"/>
+        <result property="receive_fax" column="cust_fax"/>
+        <result property="receive_contact" column="cust_cont"/>
+
+        <result property="send_from" column="ou_name"/>
+        <result property="send_address" column="my_addr"/>
+        <result property="send_tel" column="my_tel"/>
+        <result property="send_fax" column="my_fax"/>
+        <result property="send_postcode" column="my_post"/>
+        <result property="terms_name" column="term_name"/>
+        <result property="fob_point_code" column="fob_point_code"/>
+
+    </resultMap>
+
     <select id="getBlameSelectOptions" resultType="com.suntak.eightdisciplines.entity.BlameProcess">
         SELECT * FROM TABLE(APPS.CUX_COMMON_MXIE_PKG.GET_BLAME_DEPTS(#{org_id}, #{item_id}))
     </select>
 
 
+    <select id="getErpFinanceDebitInfo" resultMap="FinanceDebitMap">
+      SELECT cust_name,
+       InvToAddr,
+       ShipToAddr,
+       cust_tel,
+       cust_fax,
+       cust_cont,
+       curr_code,
+       ou_name,
+       my_addr,
+       my_tel,
+       my_fax,
+       my_post,
+       term_cond,
+       term_name,
+       fob_point_code
+      FROM APPS.CUX_OA_OM_RMA_INFO_V t
+      WHERE t.order_number = #{orderhead}
+    </select>
+
+    <!-- 插入扣减扣款单到ERP-->
+    <insert id="insertErpDecreaseFinanaceDebit">
+        INSERT INTO CUX_8D_DEBIT_TBL( MAIN_8D_ID,ORG_ID,ORDER_NUMBER, LINE_NUMBER, TRANSACTION_DATE, CURR_CODE,
+        WASTE_MONEY,QUANTITY,  DELIVERY_STATUS,STATUS)
+        VALUES  (#{invoice_no,jdbcType=VARCHAR},#{organization_id,jdbcType=VARCHAR}, #{orderhead,jdbcType=VARCHAR}, #{orderline,jdbcType=VARCHAR}, SYSDATE, #{currency,jdbcType=VARCHAR},
+        #{decrease_amount,jdbcType=VARCHAR},1,'DEBIT', 'N')
+    </insert>
 </mapper>

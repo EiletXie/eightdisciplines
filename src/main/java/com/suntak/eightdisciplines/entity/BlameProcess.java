@@ -1,8 +1,9 @@
 package com.suntak.eightdisciplines.entity;
 
+import lombok.Data;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@EntityScan
+@Data
 public class BlameProcess {
 
     private String base_uid;

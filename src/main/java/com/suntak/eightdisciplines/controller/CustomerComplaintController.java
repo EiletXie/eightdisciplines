@@ -228,5 +228,8 @@ public class CustomerComplaintController {
         return "complaintChange";
     }
 
-
+    @GetMapping("/userSelectPanel")
+    public String toSelectPanel() {
+        return "selectPanel";
+    }
 }
