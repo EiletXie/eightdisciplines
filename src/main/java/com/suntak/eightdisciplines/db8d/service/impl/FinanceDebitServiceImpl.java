@@ -6,6 +6,7 @@ import com.suntak.eightdisciplines.db8d.dao.FinanceDebitDao;
 import com.suntak.eightdisciplines.db8d.dao.UserDao;
 import com.suntak.eightdisciplines.db8d.service.FinanceDebitService;
 import com.suntak.eightdisciplines.db8d.service.UserService;
+import com.suntak.eightdisciplines.dbErp.dao.CommonUtilsDao;
 import com.suntak.eightdisciplines.entity.FinanceDebit;
 import com.suntak.eightdisciplines.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -30,24 +28,40 @@ public class FinanceDebitServiceImpl implements FinanceDebitService {
     @Resource
     FinanceDebitDao financeDebitDao;
 
+    @Resource
+    CommonUtilsDao commonUtilsDao;
+
     @Override
     public FinanceDebit getFinanceDebitById(String BASE_UID) {
         return financeDebitDao.getFinanceDebitById(BASE_UID);
     }
 
     @Override
-    public List<String> getEmailListById(String base_uid) {
-        return financeDebitDao.getEmailListById(base_uid);
+    public List<String> getEmailListById(String base_uid,String customer_number) {
+        String finance_man = commonUtilsDao.getFinanceNameByCustNum(customer_number);
+        String finance_user_id = financeDebitDao.getEmpIdByName(finance_man);
+        String business_engineer_id = financeDebitDao.getBusinessEngineerById(base_uid);
+        String finance_email = financeDebitDao.getEmailByUserId(finance_user_id);
+        String engineer_email = financeDebitDao.getEmailByUserId(business_engineer_id);
+        List<String> list = new ArrayList<>();
+        list.add(finance_email);
+        list.add(engineer_email);
+        return list;
     }
 
     @Override
-    public List<FinanceDebit> getListWithOptional(Date CREATE_DATE, Date END_DATE, String INVOICE_NO, String CUSTOMER_CODE) {
-        return financeDebitDao.getListWithOptional(CREATE_DATE, END_DATE, INVOICE_NO, CUSTOMER_CODE);
+    public List<FinanceDebit> getListWithOptional(Date CREATE_DATE, Date END_DATE, String INVOICE_NO, String CUSTOMER_NUMBER,String CUSTOMER_CODE) {
+        return financeDebitDao.getListWithOptional(CREATE_DATE, END_DATE, INVOICE_NO, CUSTOMER_NUMBER,CUSTOMER_CODE);
     }
 
     @Override
     public FinanceDebit getClaiInfo(String invoice_no) {
         return financeDebitDao.getClaiInfo(invoice_no);
+    }
+
+    @Override
+    public FinanceDebit getClaiInfoByBaseuid(String base_uid) {
+        return financeDebitDao.getClaiInfoByBaseuid(base_uid);
     }
 
     @Override
@@ -78,10 +92,20 @@ public class FinanceDebitServiceImpl implements FinanceDebitService {
                         "已签核结束<br>" +
                         "发送日期: " + senddate;
 
-                List<String> emailList = financeDebitDao.getEmailListById(financeDebit.getBase_uid());
+                // 获取相关人的邮箱，发起人 商务工程师，客户对应的财务专员
+                String customer_number = financeDebit.getCustomer_number();
+                String base_uid = financeDebit.getBase_uid();
+                String finance_man = commonUtilsDao.getFinanceNameByCustNum(customer_number);
+                String finance_user_id = financeDebitDao.getEmpIdByName(finance_man);
+                String business_engineer_id = financeDebitDao.getBusinessEngineerById(base_uid);
+                List<String> emailList = new ArrayList<>();
+                String finance_email = financeDebitDao.getEmailByUserId(finance_user_id);
+                String engineer_email = financeDebitDao.getEmailByUserId(business_engineer_id);
+                emailList.add(finance_email);
+                emailList.add(engineer_email);
 
-                emailList.clear();
-                emailList.add("cxie@suntakpcb.com");
+//                emailList.clear(); 测试邮件用的
+//                emailList.add("cxie@suntakpcb.com");
                 ByteArrayOutputStream baos = cloneInputStream(is);
                 for (String receive :
                         emailList) {
@@ -138,6 +162,7 @@ public class FinanceDebitServiceImpl implements FinanceDebitService {
      */
     public boolean addFinanceDebit(FinanceDebit financeDebit) {
         int count = financeDebitDao.checkFinanceDebitByBase_uid(financeDebit.getBase_uid());
+        count = count + financeDebitDao.checkDecreaseFinanceDebitByBase_uid(financeDebit.getBase_uid());
         if (count == 0) {
             financeDebitDao.addFinanceDebit(financeDebit);
             return true;
@@ -151,8 +176,8 @@ public class FinanceDebitServiceImpl implements FinanceDebitService {
     }
 
     @Override
-    public List<FinanceDebit> getDecreaseListWithOptional(Date CREATE_DATE, Date END_DATE, String INVOICE_NO, String CUSTOMER_CODE) {
-        return financeDebitDao.getDecreaseListWithOptional(CREATE_DATE, END_DATE, INVOICE_NO, CUSTOMER_CODE);
+    public List<FinanceDebit> getDecreaseListWithOptional(Date CREATE_DATE, Date END_DATE, String INVOICE_NO, String CUSTOMER_NUMBER,String CUSTOMER_CODE) {
+        return financeDebitDao.getDecreaseListWithOptional(CREATE_DATE, END_DATE, INVOICE_NO, CUSTOMER_NUMBER,CUSTOMER_CODE);
     }
 
     @Override
@@ -163,5 +188,15 @@ public class FinanceDebitServiceImpl implements FinanceDebitService {
     @Override
     public void deleteFinanceDebit(String base_uid) {
         financeDebitDao.deleteFinanceDebit(base_uid);
+    }
+
+    @Override
+    public FinanceDebit getDecreaseFinanceDebitById(String base_uid){
+        return financeDebitDao.getDecreaseFinanceDebitById(base_uid);
+    }
+
+    @Override
+    public int countRmaRecord(String invoice_no) {
+        return financeDebitDao.countRmaRecord(invoice_no);
     }
 }

@@ -48,9 +48,19 @@
 
     <!-- 插入扣减扣款单到ERP-->
     <insert id="insertErpDecreaseFinanaceDebit">
-        INSERT INTO CUX_8D_DEBIT_TBL( MAIN_8D_ID,ORG_ID,ORDER_NUMBER, LINE_NUMBER, TRANSACTION_DATE, CURR_CODE,
+        INSERT INTO apps.CUX_8D_DEBIT_TBL( MAIN_8D_ID,ORG_ID,ORDER_NUMBER, LINE_NUMBER, TRANSACTION_DATE, CURR_CODE,
         WASTE_MONEY,QUANTITY,  DELIVERY_STATUS,STATUS)
         VALUES  (#{invoice_no,jdbcType=VARCHAR},#{organization_id,jdbcType=VARCHAR}, #{orderhead,jdbcType=VARCHAR}, #{orderline,jdbcType=VARCHAR}, SYSDATE, #{currency,jdbcType=VARCHAR},
         #{decrease_amount,jdbcType=VARCHAR},1,'DEBIT', 'N')
     </insert>
+
+    <select id="getOrgIdByOrder" resultType="String">
+        SELECT ORGANIZATION_ID FROM apps.cux_8d_order_info_v T
+        WHERE T.order_number = #{orderhead,jdbcType=VARCHAR} AND  T.LINE_num = #{orderline,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getFinanceNameByCustNum" resultType="String">
+         SELECT T.FINANCE_MAN FROM APPS.CUX_AR_CUST_FINANCE_MAN_TBL T WHERE T.CUST_NUM = #{customer_number,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

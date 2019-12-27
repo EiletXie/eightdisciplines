@@ -2,6 +2,7 @@ package com.suntak.eightdisciplines.dbErp.service;
 
 import com.suntak.eightdisciplines.entity.BlameProcess;
 import com.suntak.eightdisciplines.entity.FinanceDebit;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -21,9 +22,10 @@ public interface CommonUtilsService {
     /**
      * 获取订单行对应的 扣款单发送方和接收方信息
      * @param orderhead
+     * @param orderline
      * @return
      */
-    FinanceDebit getErpFinanceDebitInfo(String orderhead);
+    FinanceDebit getErpFinanceDebitInfo(String orderhead,String orderline);
 
     /**
      * 插入一条 扣款记录到ERP中

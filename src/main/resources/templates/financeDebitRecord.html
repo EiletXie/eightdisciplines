@@ -46,9 +46,13 @@
             margin-bottom: 20px;
         }
 
-        td, th {
+        th {
             text-align: center;
             align: middle;
+        }
+
+        .amount_td {
+            align: right;
         }
     </style>
 
@@ -270,9 +274,19 @@
                             <label for="INVOICE_NO">RMA-NO：</label>
                             <input type="text" id="INVOICE_NO">
                         </div>
-                        <div class="form-group">
-                            <label for="CUSTOMER_CODE">客户编码：</label>
-                            <input type="text" id="CUSTOMER_CODE">
+                        <div class="row">
+                           <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="CUSTOMER_NUMBER">客户编码：</label>
+                                <input type="text" id="CUSTOMER_NUMBER">
+                            </div>
+                           </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="CUSTOMER_CODE">客户名称：</label>
+                                    <input type="text" id="CUSTOMER_CODE">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button type="button" class="btn btn-default" id="record_find_btn">查询</button>
@@ -293,15 +307,16 @@
                         <th><input type="checkbox" id="checkbox_select_all"> </th>
                         <th>生产型号</th>
                         <th>RMA</th>
+                        <th>客户编码</th>
                         <th>客户名称</th>
+                        <th>币别</th>
                         <th>索赔金额</th>
                         <th>扣减金额</th>
-                        <th>客户编码</th>
                         <th>订单头</th>
                         <th>订单行</th>
                         <th>日期</th>
                         <th>工厂</th>
-                        <th><button class="btn btn-danger" id="decrease_amount_btn">扣减</button></th>
+                        <th><input class="btn btn-danger" type="button" id="decrease_amount_btn" value="扣减"/></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -347,12 +362,12 @@
     $(function () {
 
         var nowday = new Date().format("yyyy-MM-dd");
-        $("#startdate").val(nowday);
-        $("#enddate").val(nowday);
+        // $("#startdate").val(nowday);
+        // $("#enddate").val(nowday);
 
 
         //页面一加载，跳转到第一页
-        to_page(1);
+        // to_page(1);
 
         // 加载用户选择界面 ("select.html")
         $(".userSelectPanel").load(contextPath+"/complaint/userSelectPanel");
@@ -369,9 +384,11 @@
             success: function (result) {
                 console.log(result);
                 var code = result.code;
-                if(code == 100)
+                if(code == 100) {
                     alert("录入成功！");
-                else if(code == 200){
+                    $("#addFinanceDebitModal").modal('hide');
+
+                }else if(code == 200){
                     alert(result.extend.content);
                 }
             }
@@ -384,9 +401,9 @@
        $.each($(".records_select:checked"),function () {
            var tdList = $(this).parent().parent("tr").children("td");
            // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第11列是查看数据的button
-           var decrease_amount = tdList.eq(5).children("input").eq(0).val();
-           var base_uid = tdList.eq(11).children("button").eq(0).attr("edit-id");
-           var org_id = tdList.eq(10).children("select").eq(0).val();
+           var decrease_amount = tdList.eq(7).children("input").eq(0).val();
+           var base_uid = tdList.eq(12).children("button").eq(0).attr("edit-id");
+           var org_id = tdList.eq(11).children("select").eq(0).val();
 
            $.ajax({
                url: contextPath + "/financeDebit/decreaseFinanceDebit",
@@ -396,6 +413,7 @@
                    org_id:org_id
                },
                type: "POST",
+               async: false,
                success: function (result) {
 
                }
@@ -415,9 +433,11 @@
     function checkbox_select(obj){
         var tdList = $(obj).parent().parent("tr").children("td");
         console.log(tdList);
-        // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量
-        var decrease_amount = tdList.eq(5).children("input").eq(0).val();
-        var clai_amount = tdList.eq(4).text();
+        // 一定要注意tr下td列表eq顺序 ，第8列是扣减数量
+        var decrease_amount = tdList.eq(7).children("input").eq(0).val();
+        var clai_amount = tdList.eq(6).text();
+        decrease_amount = decrease_amount.replace(",","");
+        clai_amount = clai_amount.replace(",","");
         if(parseFloat(clai_amount) < parseFloat(decrease_amount)) {
             alert("扣款金额不允许比索赔金额大！");
         }else {
@@ -441,9 +461,13 @@
          decrease_total = 0;
         $.each($(".records_select:checked"),function () {
             var tdList = $(this).parent().parent("tr").children("td");
-            // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第11列是查看数据的button
-            var decrease_amount = tdList.eq(5).children("input").eq(0).val();
-            var clai_amount = tdList.eq(4).text();
+            // 一定要注意tr下td列表eq顺序 ，第8列是扣减数量，第13列是查看数据的button
+            var decrease_amount = tdList.eq(7).children("input").eq(0).val();
+            var clai_amount = tdList.eq(6).text();
+
+            // 千分位字符转换为正常的浮点数
+            decrease_amount = decrease_amount.replace(",","");
+            clai_amount = clai_amount.replace(",","");
             var checkbox_obj = tdList.eq(0).children("input");
             if(parseFloat(clai_amount) < parseFloat(decrease_amount)) {
                 alert("扣款金额不允许比索赔金额大！");
@@ -465,7 +489,8 @@
     }
 
     $("#checkbox_select_all").click(function () {
-
+        clai_total = 0;
+        decrease_total = 0;
         var check_flag = $("#checkbox_select_all").is(':checked');
         $.each($(".records_select"),function () {
             if(check_flag){
@@ -475,25 +500,24 @@
             }
 
             var tdList = $(this).parent().parent("tr").children("td");
-            // 一定要注意tr下td列表eq顺序 ，第6列是扣减数量，第12列是查看数据的button
-            var decrease_amount = tdList.eq(5).children("input").eq(0).val();
-            var clai_amount = tdList.eq(4).text();
+            // 一定要注意tr下td列表eq顺序 ，第8列是扣减数量，第13列是查看数据的button
+            var decrease_amount = tdList.eq(7).children("input").eq(0).val();
+            var clai_amount = tdList.eq(6).text();
+            // 千分位字符转换为正常的浮点数
+            decrease_amount = decrease_amount.replace(",","");
+            clai_amount = clai_amount.replace(",","");
             var checkbox_obj = tdList.eq(0).children("input");
 
             if (checkbox_obj.is(':checked')) {
                 clai_total = clai_total +  parseFloat(clai_amount);
                 decrease_total = decrease_total + parseFloat(decrease_amount);
-            } else {
-                clai_total = clai_total -  parseFloat(clai_amount);
-                decrease_total = decrease_total -  parseFloat(decrease_amount);
             }
-
-            $("#clai_total_area").empty();
-            $("#clai_total_area").append("索赔总金额： " + Math.round(clai_total * 100) / 100);
-            $("#decrease_total_area").empty();
-            $("#decrease_total_area").append("扣款总金额： " + Math.round(decrease_total  * 100) / 100);
-
         });
+
+        $("#clai_total_area").empty();
+        $("#clai_total_area").append("索赔总金额： " + Math.round(clai_total * 100) / 100);
+        $("#decrease_total_area").empty();
+        $("#decrease_total_area").append("扣款总金额： " + Math.round(decrease_total  * 100) / 100);
     });
     Date.prototype.format = function (format) {
         var o = {
@@ -535,6 +559,7 @@
                 startdate: start_day,
                 enddate: end_day,
                 INVOICE_NO: $("#INVOICE_NO").val(),
+                CUSTOMER_NUMBER: $("#CUSTOMER_NUMBER").val(),
                 CUSTOMER_CODE: $("#CUSTOMER_CODE").val()
             },
             type: "POST",
@@ -550,8 +575,8 @@
         });
     }
 
-    
-    
+
+
     //建立用户的表格数据
     function build_records_table(result) {
         //先清空表格数据
@@ -564,9 +589,10 @@
             var RMA_TD = $("<td></td>").append(item.invoice_no);
             var CUSTOMER_CODE_TD = $("<td></td>").append(item.customer_code);
             var CUSTOMER_NUMBER_TD = $("<td></td>").append(item.customer_number);
-            var TOTAL_AMOUNT_TD = $("<td></td>").append(item.unitprice);
+            var CURRENCY_TD = $("<td></td>").append(item.currency);
+            var TOTAL_AMOUNT_TD = $("<td align='right'></td>").append(item.unitprice);
 
-            var INPUT_TD = $("<input type='text' onchange='count_total()'/>");
+            var INPUT_TD = $("<input type='text' style='text-align: right;' onchange='count_total()'/>");
             INPUT_TD.attr("value",item.unitprice);
             var DECREASE_AMOUNT_TD = $("<td></td>").append(INPUT_TD);
             var ORDERHEAD_TD = $("<td></td>").append(item.orderhead);
@@ -595,10 +621,11 @@
             $("<tr></tr>").append(CHOOSE_TD)
                 .append(MODEL_TD)
                 .append(RMA_TD)
+                .append(CUSTOMER_NUMBER_TD)
                 .append(CUSTOMER_CODE_TD)
+                .append(CURRENCY_TD)
                 .append(TOTAL_AMOUNT_TD)
                 .append(DECREASE_AMOUNT_TD)
-                .append(CUSTOMER_NUMBER_TD)
                 .append(ORDERHEAD_TD)
                 .append(ORDERLINE_TD)
                 .append(DATE_TD)
@@ -682,7 +709,8 @@
                 startdate: $("#startdate").val(),
                 enddate: $("#enddate").val(),
                 INVOICE_NO: $("#INVOICE_NO").val(),
-                CUSTOMER_CODE: $("#CUSTOMER_CODE").val()
+                CUSTOMER_NUMBER: $("#CUSTOMER_NUMBER").val(),
+                CUSTOMER_CODE: $("#CUSTOMER_CODE").val(),
             },
             success: function (result) {
                 //1.在页面解析并显示员工数据
@@ -748,8 +776,11 @@
     $("#exportBtn").click(function () {
         var start_day = $("#startdate").val();
         var end_day = $("#enddate").val();
-
-        window.location.href = contextPath + "financeDebit/export?startdate=" + start_day + "&enddate=" + end_day;
+        var INVOICE_NO = $("#INVOICE_NO").val();
+        var CUSTOMER_NUMBER = $("#CUSTOMER_NUMBER").val();
+        var CUSTOMER_CODE = $("#CUSTOMER_CODE").val();
+        window.location.href = contextPath + "financeDebit/export?startdate=" + start_day + "&enddate=" + end_day
+            + "&INVOICE_NO=" + INVOICE_NO + "&CUSTOMER_NUMBER=" + CUSTOMER_NUMBER + "&CUSTOMER_CODE=" + CUSTOMER_CODE;
     });
 
 

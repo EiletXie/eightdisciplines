@@ -18,25 +18,33 @@ public interface FinanceDebitService {
     FinanceDebit getFinanceDebitById(String BASE_UID);
 
     /**
+     * 根据BASE_UID 查询扣款单详细信息
+     * @param BASE_UID
+     */
+    FinanceDebit getDecreaseFinanceDebitById(String BASE_UID);
+
+    /**
      * 根据条件过滤扣款单数据
      *
      * @param CREATE_DATE
      * @param END_DATE
      * @param INVOICE_NO
-     * @param CUSTOMER_CODE
+     * @param CUSTOMER_NUMBER
      * @return
      */
     List<FinanceDebit> getListWithOptional(Date CREATE_DATE,
                                            Date END_DATE,
                                            String INVOICE_NO,
+                                           String CUSTOMER_NUMBER,
                                            String CUSTOMER_CODE);
 
     /**
      * 通过表单ID查询对应财务和商务人员的邮件集合
      * @param base_uid
+     * @param customer_number
      * @return
      */
-    List<String> getEmailListById(String base_uid);
+    List<String> getEmailListById(String base_uid,String customer_number);
 
     /**
      * 定时任务 更新扣款单并发送邮件给指定人
@@ -50,6 +58,13 @@ public interface FinanceDebitService {
      * @return
      */
     FinanceDebit getClaiInfo(String invoice_no);
+
+    /**
+     * 获取扣款单相关的索赔信息,由于以前存在 RMA相同的bug
+     * @param base_uid
+     * @return
+     */
+    FinanceDebit getClaiInfoByBaseuid(String base_uid);
 
 
     /**
@@ -70,12 +85,13 @@ public interface FinanceDebitService {
      * @param CREATE_DATE
      * @param END_DATE
      * @param INVOICE_NO
-     * @param CUSTOMER_CODE
+     * @param CUSTOMER_NUMBER
      * @return
      */
     List<FinanceDebit> getDecreaseListWithOptional(Date CREATE_DATE,
                                                    Date END_DATE,
                                                    String INVOICE_NO,
+                                                   String CUSTOMER_NUMBER,
                                                    String CUSTOMER_CODE);
 
     /**
@@ -91,4 +107,11 @@ public interface FinanceDebitService {
      * @param base_uid
      */
     void deleteFinanceDebit(String base_uid);
+
+    /**
+     * 获取RMA扣减记录数
+     * @param invoice_no
+     * @return
+     */
+    int countRmaRecord(String invoice_no);
 }

@@ -31,25 +31,33 @@ public interface FinanceDebitDao {
     FinanceDebit getFinanceDebitById(String base_uid);
 
     /**
+     * 根据BASE_UID 查询扣款单详细信息
+     * @param base_uid
+     */
+    FinanceDebit getDecreaseFinanceDebitById(String base_uid);
+
+
+    /**
      * 根据条件过滤扣款单数据
      * @param START_DATE
      * @param END_DATE
      * @param INVOICE_NO
-     * @param CUSTOMER_CODE
+     * @param CUSTOMER_NUMBER
      * @return
      */
     List<FinanceDebit> getListWithOptional(@Param("START_DATE") Date START_DATE,
                                            @Param("END_DATE") Date END_DATE,
                                            @Param("INVOICE_NO") String INVOICE_NO,
+                                           @Param("CUSTOMER_NUMBER") String CUSTOMER_NUMBER,
                                            @Param("CUSTOMER_CODE") String CUSTOMER_CODE);
 
 
     /**
-     * 通过表单ID查询对应财务和商务人员的邮件集合
-     * @param base_uid
+     * 通过工号对应的邮箱
+     * @param emp_id
      * @return
      */
-    List<String> getEmailListById(String base_uid);
+    String getEmailByUserId(String emp_id);
 
     /**
      * 获取扣款单相关的索赔信息
@@ -57,6 +65,14 @@ public interface FinanceDebitDao {
      * @return
      */
     FinanceDebit getClaiInfo(String invoice_no);
+
+
+    /**
+     * 获取扣款单相关的索赔信息
+     * @param base_uid
+     * @return
+     */
+    FinanceDebit getClaiInfoByBaseuid(String base_uid);
 
     /**
      * 新增扣款单记录
@@ -78,16 +94,25 @@ public interface FinanceDebitDao {
     int checkFinanceDebitByBase_uid(String base_uid);
 
     /**
+     * 检查 扣款单是否存在于扣减记录中
+     * @param base_uid
+     * @return
+     */
+    int checkDecreaseFinanceDebitByBase_uid(String base_uid);
+
+
+    /**
      * 根据条件过滤已扣减的扣款单数据
      * @param START_DATE
      * @param END_DATE
      * @param INVOICE_NO
-     * @param CUSTOMER_CODE
+     * @param CUSTOMER_NUMBER
      * @return
      */
     List<FinanceDebit> getDecreaseListWithOptional(@Param("START_DATE") Date START_DATE,
                                                    @Param("END_DATE") Date END_DATE,
                                                    @Param("INVOICE_NO") String INVOICE_NO,
+                                                   @Param("CUSTOMER_NUMBER") String CUSTOMER_NUMBER,
                                                    @Param("CUSTOMER_CODE") String CUSTOMER_CODE);
 
     /**
@@ -103,4 +128,32 @@ public interface FinanceDebitDao {
      * @param base_uid
      */
     void deleteFinanceDebit(String base_uid);
+
+
+    /**
+     * 通过姓名获取工号
+     * @param alternateName
+     * @return
+     */
+    String getEmpIdByName(String alternateName);
+
+    /**
+     * 获取BASE_UID对应的商务
+     * @param base_uid
+     * @return
+     */
+    String getBusinessEngineerById(String base_uid);
+
+    /**
+     * 通过BASE_UID 更新组织
+     * @param organization_id
+     */
+    void updateFinanceDebitOrgId(@Param("organization_id") String organization_id,@Param("base_uid") String base_uid);
+
+    /**
+     * 获取RMA扣减记录数
+     * @param invoice_no
+     * @return
+     */
+    int countRmaRecord(@Param("invoice_no") String invoice_no);
 }

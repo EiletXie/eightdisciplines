@@ -20,10 +20,10 @@ import javax.annotation.Resource;
  * @Date: 2019/9/16 11:02
  * @Description: 8D扣款单定时发送任务
  */
-//@Component
-//@Configuration
-//@EnableScheduling
-//@Slf4j
+@Component
+@Configuration
+@EnableScheduling
+@Slf4j
 public class FinanceDebitScheduleTask {
 
 
@@ -32,9 +32,8 @@ public class FinanceDebitScheduleTask {
 
 
     @Transactional
-//    @Scheduled(cron = "0 0/30 8-20 * * ?")
-//   @Scheduled(cron = "0/10 * * * * ?")
-    @RequestMapping("/sendMail")
+    @Scheduled(cron = "0 0/20 8-20 * * ?")
+//   @Scheduled(cron = "0/20 * * * * ?")
     public void timeDetectFinance(){
         financeDebitService.timeDetectFinance();
      }

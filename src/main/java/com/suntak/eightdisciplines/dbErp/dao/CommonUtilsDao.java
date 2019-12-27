@@ -4,6 +4,7 @@ import com.suntak.eightdisciplines.entity.BlameProcess;
 import com.suntak.eightdisciplines.entity.FinanceDebit;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -35,4 +36,20 @@ public interface CommonUtilsDao {
      * @param financeDebit
      */
     void insertErpDecreaseFinanaceDebit(FinanceDebit financeDebit);
+
+    /**
+     * 获取订单对应的工厂
+     * @param orderhead
+     * @param orderline
+     * @return
+     */
+    String getOrgIdByOrder(@Param("orderhead")String orderhead, @Param("orderline") String orderline);
+
+
+    /**
+     * 根据客户编码获取对应的财务人员
+     * @param customer_number
+     * @return
+     */
+    String getFinanceNameByCustNum(String customer_number);
 }

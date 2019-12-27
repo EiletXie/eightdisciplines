@@ -31,7 +31,8 @@ public class UserController {
         User u = userService.loginUser(user);
         map.addAttribute("customerComplaint", new CustomerComplaint());
         if (u != null) {
-            if(u.getRole() != null && u.getRole().equals("品保专员")){
+            if(!username.equals("lxwang") && (u.getRole() != null
+                    && (u.getRole().equals("品保专员") || u.getRole().equals("品保主管")) )){
                 map.addAttribute("user", user);
                 session.setAttribute("loginFlag", false);
                 return "index";
@@ -39,7 +40,10 @@ public class UserController {
             session.setAttribute("user", u);
             session.setAttribute("loginFlag", true);
             session.setMaxInactiveInterval(30 * 60);
-            return "complaintChange";
+            if(u.getRole() != null && u.getRole().equals("财务专员")){
+                return "financeDebitRecord";
+            }else
+                 return "complaintChange";
 
         } else {
             map.addAttribute("user", user);

@@ -24,8 +24,9 @@ public class FinanceDebit {
     private String orderline; // 订单行
     @Excel(name = "客户品名", width = 20)
     private String customer_category; // 客户品名 原字段名称 BADCATEGORY
-    @Excel(name = "客户编码", width = 20)
+    @Excel(name = "客户名称", width = 20)
     private String customer_code;
+    @Excel(name = "客户编码", width = 20)
     private String customer_number;
 
     @Excel(name = "UNIT", width = 10)
@@ -82,4 +83,5 @@ public class FinanceDebit {
     private String decr_id;
 
     private String organization_id;
+    private String organization_name;
 }

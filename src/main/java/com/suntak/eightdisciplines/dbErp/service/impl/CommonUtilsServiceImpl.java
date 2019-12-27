@@ -21,8 +21,11 @@ public class CommonUtilsServiceImpl implements CommonUtilsService {
     }
 
     @Override
-    public FinanceDebit getErpFinanceDebitInfo(String orderhead) {
-        return commonUtilsDao.getErpFinanceDebitInfo(orderhead);
+    public FinanceDebit getErpFinanceDebitInfo(String orderhead,String orderline) {
+        FinanceDebit financeDebit = commonUtilsDao.getErpFinanceDebitInfo(orderhead);
+        String org_id = commonUtilsDao.getOrgIdByOrder(orderhead,orderline);
+        financeDebit.setOrganization_id(org_id);
+        return financeDebit;
     }
 
     @Override
